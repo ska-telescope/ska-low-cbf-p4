@@ -1,0 +1,9 @@
+global-options:
+  asic: true
+features:
+  bf-platforms:
+    bsp-path: ${bsp_path
+  drivers:
+    p4rt: true
+    thrift-driver: false
+ architectures: []
