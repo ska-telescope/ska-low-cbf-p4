@@ -1,7 +1,7 @@
 P4 code for SKA Low CBF
 =================
 
-[![Documentation Status](https://readthedocs.org/projects/ska-telescope-ska-low-cbf-conn/badge/?version=latest)](https://developer.skao.int/projects/ska-low-cbf-conn/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/ska-telescope-ska-low-cbf-p4/badge/?version=latest)](https://developer.skao.int/projects/ska-low-cbf-p4/en/latest/?badge=latest)
 
 This repository contains the P4 code to deploy the Atomic COTS solution of the SKA Low CBF. This code originates
 from the Low CBF network directory and is now independent of the controler of the P4 switch. 
