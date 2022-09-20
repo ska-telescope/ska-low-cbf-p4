@@ -53,6 +53,7 @@ struct header_t {
     icmp_h icmp;
     tcp_h tcp;
     telemetry_spead_h telemetry_spead;
+    arp_resolution_h arp_resolution;
     spead_h spead;
     channel_info_h channel;
     station_info_h station;

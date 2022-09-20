@@ -339,6 +339,44 @@ control Ingress(
         ig_tm_md.ucast_egress_port = ig_intr_md.ingress_port;
 
     }
+
+    @name(".send_arp_to_sdp")
+    action send_arp_to_sdp(bit<32> ifid) {
+        ig_md.ifid = ifid;
+        direct_counter_arp.count();
+        ig_tm_md.ucast_egress_port = 9w0x1ff;
+
+    }
+
+    @name(".send_reply_from_sdp")
+    action send_reply_from_sdp(PortId_t dest_port, ipv4_addr_t dst_ip_addr,
+                                ipv4_addr_t src_ip_addr) {
+        hdr.ethernet.ether_type = ETHERTYPE_IPV4;
+        hdr.arp.setInvalid();
+        hdr.ipv4.setValid();
+        hdr.ipv4.src_addr = src_ip_addr;
+        hdr.ipv4.dst_addr= dst_ip_addr;
+        hdr.ipv4.total_len = 58;
+        hdr.ipv4.ihl = 5;
+        hdr.ipv4.version = 4;
+//        hdr.ipv4.ttl = 64;
+//        hdr.ipv4.diffserv = 0;
+//        hdr.ipv4.identification = 1;
+        hdr.ipv4.protocol = IP_PROTOCOLS_UDP;
+        hdr.udp.setValid();
+        hdr.udp.hdr_length = 38;
+        hdr.udp.dst_port = 5280;
+        hdr.arp_resolution.setValid();
+        hdr.arp_resolution.dst_port = ig_intr_md.ingress_port;
+        hdr.arp_resolution.dst_mac_addr = hdr.arp.sha;
+        hdr.arp_resolution.dst_ip_addr = hdr.arp.spa;
+        direct_counter_arp.count();
+        ig_tm_md.ucast_egress_port = dest_port;
+
+    }
+
+
+
     @name(".arp_table")
     table arp_table {
         key = {
@@ -346,6 +384,8 @@ control Ingress(
         }
         actions = {
             answer_arp_request;
+            send_arp_to_sdp;
+            send_reply_from_sdp;
             @defaultonly nop;
         }
         size = 1024;
@@ -452,8 +492,6 @@ control Ingress(
 
         }
 
-        ing_src_ifid.apply();
-        ing_dmac.apply();
 
         if (ig_md.packet_type_ingress == 7){
             ptp_table.apply();
@@ -462,15 +500,15 @@ control Ingress(
         if (ig_md.packet_type_ingress == 1){
             arp_table.apply();
         }
+        
+        ing_src_ifid.apply();
+        ing_dmac.apply();
 
 
         if (ig_md.packet_type_ingress== 0){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1;
         }
 
-        if (ig_md.packet_type_ingress == 2){ // IP packet but not processed
-            ig_dprsr_md.drop_ctl = 0x1;
-        }
 
     }
 

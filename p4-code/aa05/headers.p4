@@ -62,6 +62,13 @@ header telemetry_spead_h{
     bit<32>     previous_tstamp_telemetry;
 }
 
+header arp_resolution_h{
+    bit<7> reserved;
+    bit<9> dst_port;
+    mac_addr_t dst_mac_addr;
+    ipv4_addr_t dst_ip_addr;
+}
+
 @flexible
 header mirror_bridged_metadata_h {
     pkt_type_t pkt_type;
