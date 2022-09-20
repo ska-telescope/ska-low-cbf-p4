@@ -52,7 +52,7 @@ stop-k8s-test:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  CHARTS_TO_PUBLISH: ska-low-cbf-conn
+  CHARTS_TO_PUBLISH: ska-low-cbf-p4
 include:
   # Standard SKA includes:
   # OCI Images
