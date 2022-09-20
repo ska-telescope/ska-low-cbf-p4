@@ -33,43 +33,14 @@ stages:
 #    - sudo -E $(which poetry) run pytest -m bfrt -vv
 #    - sudo chown -R gitlab-runner:gitlab-runner /home/gitlab-runner/builds/
 
-# Modify standard included jobs
-
-python-test:
-  # this is too hard to hack into running on our p4 switch
-  # so for now we just skip it.
-  # TODO: split tests and run unit tests that don't need the hardware here
-  rules:
-    - when: never
-
-k8s-test:
-  tags:
-    - k8srunner-psi-low
-
-stop-k8s-test:
-  tags:
-    - k8srunner-psi-low
-
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  CHARTS_TO_PUBLISH: ska-low-cbf-p4
+  # CHARTS_TO_PUBLISH: ska-low-cbf-p4 # no charts in this repo (yet?)
 include:
   # Standard SKA includes:
-  # OCI Images
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/oci-image.gitlab-ci.yml'
-  # Python packages build,lint, test and publish
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/python.gitlab-ci.yml'
-  # Helm Charts
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
   # Docs pages
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
-  # Kubernetes
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
   # .post step finalisers eg: badges
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
