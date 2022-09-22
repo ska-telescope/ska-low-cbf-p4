@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
 #
-# Configuration file for the Sphinx documentation builder.
-#
-# This file does only contain a selection of the most common options. For a
-# full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+"""
+Standard sphinx config file.
+"""
 
-# -- Path setup --------------------------------------------------------------
+import sys
+import os
+import typing
+
+
+# This is an elaborate hack to insert write property into _all_
+# mock decorators. It is needed for getting @attribute to build
+# in mocked out tango.server
+# see https://github.com/sphinx-doc/sphinx/issues/6709
+from sphinx.ext.autodoc.mock import _MockObject
+
+
+def call_mock(self, *args, **kw):
+    from types import FunctionType, MethodType
+
+    if args and type(args[0]) in [type, FunctionType, MethodType]:
+        # Appears to be a decorator, pass through unchanged
+        args[0].write = lambda x: x
+        return args[0]
+    return self
+
+
+_MockObject.__call__ = call_mock
+# hack end
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -44,19 +65,19 @@ release = '0.4.5'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.napoleon',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-              'recommonmark'
-    ]
-
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+    "recommonmark",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -106,14 +127,14 @@ html_theme_options = {
 }
 
 html_context = {
-    'favicon': 'img/favicon.ico',
-    'logo': 'img/logo.jpg',
-    'theme_logo_only': True,
-    'display_github': True,  # Integrate GitHub
-    'github_user': 'ska-telescope',  # Username
-    'github_repo': 'ska-low-cbf-p4',  # Repo name
-    'github_version': 'master',  # Version
-    'conf_py_path': '/src/',  # Path in the checkout to the docs root
+    "favicon": "img/favicon.ico",
+    "logo": "img/logo.jpg",
+    "theme_logo_only": True,
+    "display_github": True,  # Integrate GitHub
+    "github_user": "ska-telescope",  # Username
+    "github_repo": "ska-low-cbf",  # Repo name
+    "github_version": "main",  # Version
+    "conf_py_path": "/docs/source/",  # Path in the checkout to the docs root
 }
 
 
