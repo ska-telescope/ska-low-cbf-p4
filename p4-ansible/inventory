@@ -1,0 +1,11 @@
+[switches]
+psi-low-p4 ansible_host=psi-low-p4.atnf.csiro.au
+
+
+[switches:vars]
+ansible_python_interpreter=/usr/bin/python3
+username=perentie
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+username=perentie

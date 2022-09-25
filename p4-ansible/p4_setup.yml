@@ -1,0 +1,7 @@
+---
+- hosts: switches
+  remote_user: "{{ username }}"
+  become: yes
+  become_method: sudo
+  roles:
+    - role: sde

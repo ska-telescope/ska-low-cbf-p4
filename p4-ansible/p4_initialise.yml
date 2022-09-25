@@ -1,0 +1,61 @@
+---
+- hosts: switches
+  remote_user: perentie
+  vars:
+    home_dir: "/home/{{ username }}"
+    keys_file: "{{ home_dir }}/.ssh/authorized_keys"
+  tasks:
+    - name: Set hostname
+      replace:
+        path: /etc/hostname
+        regexp: localhost
+        replace: "{{ inventory_hostname_short }}"
+    - name: Add a wheel group
+      group:
+        name: wheel
+        state: present
+    - name: Allow wheel group to have passwordless sudo
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+    - name: Add a {{ username }} group
+      group:
+        name: "{{ username }}"
+        state: present
+    - name: Add {{ username }} user
+      user:
+        name: "{{ username }}"
+        shell: /bin/bash
+        home: "{{ home_dir }}"
+        group: "{{ username }}"
+        groups: wheel
+        append: yes
+    - name: Make directory
+      file:
+        path: "{{ home_dir }}/.ssh"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        state: directory
+    - name: Create empty file
+      file:
+        path: "{{ keys_file }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        state: touch
+    - name: Upload pubkeys
+      lineinfile:
+        path: "{{ keys_file }}"
+        line: "{{ item }}"
+      loop:
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCbG+vrBQi6s40iP572KqSkeY0dWCTLT+eajz5nDyz7Or5CduFVR0DBEBg30bQ2JGEBUEsFzUN0wJIgBStqwrkWTdrS8w+DNsc5QQDxqw08hH6FK6495l7/rFeRfljMkg3R/qTgU3UpCUlMczjkSFOKedZweJ+aVE+UKCnfXVb4W8O4im0/Mt4jW2du5VetLIrWL+fGa7Zqv8I6kDAF8aEj3o1dDH9v6dqdyjsD6xas2jE0p/kowRi8gS7kLbfyKmrtybUAh7dWUKmtUelNUdXbvtyEm70Ydn+iy0Bmcyekw+mPmSxVpOXMx7HsDhEaFTisyldPY7WqVIhiSpeTaSB gjourjon@atp-c02h97qvdv14.dynhost.nicta.com.au"
+    - name: Set default editor to vi
+      alternatives:
+        name: editor
+        path: /usr/bin/vim.tiny
+    - name: Reboot the system
+      reboot:
+        msg: "Reboot initiated by Ansible"
+        test_command: whoami

@@ -1,0 +1,101 @@
+---
+  - name: Update timezone
+    script: dpkg-reconfigure/tzdata.sh
+
+  - name: Disable ssh password authentication
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "^#PasswordAuthentication"
+      line: "PasswordAuthentication no"
+      backrefs: yes
+      state: present
+    notify: Restart ssh
+
+  - name: Make sde directory
+    file:
+      path: "/home/{{ username }}/sde"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      state: directory
+
+  - name: Install some useful packages
+    apt:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - htop
+      - tmux
+      - man-db
+
+  - name: Add hugepages configuration
+    sysctl:
+      name: vm.nr_hugepages
+      value: '128'
+      reload: yes
+
+  - name: Disable ipv6 on ma1 interface
+    sysctl:
+      name: net.ipv6.conf.ma1.disable_ipv6
+      value: '1'
+      reload: yes
+
+  - name: Update ~/.profile
+    blockinfile:
+      path: /home/{{ username }}/.profile
+      block: |
+        export SDE="/home/{{ username }}/sde/bf-sde-9.7.0"
+        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.7.0/install"
+        export PATH="$PATH:$SDE_INSTALL/bin"
+
+
+  - name: Update ~/.bashrc
+    lineinfile:
+      dest: /home/{{ username }}/.bashrc
+      regexp: "^#alias ll='ls -l'"
+      line: "alias ll='ls -l'"
+      backrefs: yes
+      state: present
+
+  - name: Copy bf-sde
+    copy:
+      src: sde/bf-sde-9.7.0.tgz
+      dest: /home/{{ username }}/sde/bf-sde-9.7.0.tgz
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0755'
+
+  - name: Copy aps-bsp
+    copy:
+      src: sde/apsn-bsp-bf6064x-9.7.0_1.tgz
+      dest: /home/{{ username }}/sde/apsn-bsp-bf6064x-9.7.0_1.tgz
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0755'
+
+
+  - name: Copy aps-ptp-daemon
+    copy:
+      src: sde/apsn-ptpd_0.9.0-bionic_amd64.deb
+      dest: /home/{{ username }}/sde/apsn-ptpd_0.9.0-bionic_amd64.deb
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0755'
+
+  - name: Copy aps-bsp config yaml
+    copy:
+      src: sde/apsn.yaml
+      dest: /home/{{ username }}/sde/apsn.yaml
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0644'
+
+  - name: Extract SDE file
+    unarchive:
+      src: /home/{{ username }}/sde/bf-sde-9.7.0.tgz
+      dest: /home/{{ username }}/sde/
+      remote_src: yes
+
+  - name: compile SDE
+    ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/apsn.yaml
+    args:
+      chdir: /home/{{ username }}/sde/bf-sde-9.7.0
