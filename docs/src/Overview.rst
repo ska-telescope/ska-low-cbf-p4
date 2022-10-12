@@ -21,7 +21,7 @@ While in term of astronomy related traffic most of the connectivity to LFAA, PST
 
 
 Low CBF software in AA0.5
-################
+#########################
 
 In parallel to the hardware connectivity, in AA.5 Low CBF will have numerous Tango devices to control and monitor itself as depicted below.
 
@@ -40,7 +40,7 @@ The documentation for AA.5 is organised around two axis, namely data plan functi
 * P4 Switch Software and OS in AA0.5 provides an overview of the necessary software and OS requirement to operate and control the P4 switch. The description include updating the previously-used Operating System version, and superseeds the previous install guide.
 
 P4 tables in AA0.5
-################
+##################
 
 In order to support the Low CBF in AA0.5, the P4 switch is loaded with several tables that will
 route the traffic to the correct correlator/beamformer, provide interfacing to the rest of the

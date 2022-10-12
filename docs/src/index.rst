@@ -5,10 +5,14 @@ ska-low-cbf-p4
 P4 code overview with a focus on various Assembly Arrays (AAs) starting with AA0.5.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Readme
+    :maxdepth: 2
+    :caption: Contents:
 
-   README.md
+.. toctree::
+    :maxdepth: 2
+    :caption: Readme
+
+    README.md
 
 .. toctree::
    :maxdepth: 2
