@@ -46,4 +46,14 @@ In order to support the Low CBF in AA0.5, the P4 switch is loaded with several t
 route the traffic to the correct correlator/beamformer, provide interfacing to the rest of the
 telescope, and enable the traffic telemetry.
 
+Overall, we will have in the P4 switch the following tables:
 
+* ARP table
+* ing_port_table table (aka basic table)
+* ing_port, a table allowing for basic multicasting
+* multiplier_spead table, a table for multiplying SPEAD traffic from SPS
+* spead_table, a table for SPEAD routing when only using correlator or beamformer
+* ptp_table, a table for PTP traffic
+* ing_src_ifid and ing_dmac, 2 tables used when multication of traffic
+
+In the remainder of this documentation, we are going to detail the various tables.
