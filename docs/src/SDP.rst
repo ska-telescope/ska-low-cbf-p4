@@ -10,7 +10,7 @@ Overall we are interested in describing the operation of the P4 switch in the sc
 
 .. image:: diagrams/p4_sdp_05.png
   :width: 400
-  :alt: SPEAD header
+  :alt: CBF to SDP Traffic in AA0.5
 
 P4 table
 ================
