@@ -1,6 +1,6 @@
-******************
+************************************
 ARP Traffic routing in AA0.5
-******************
+************************************
 
 
 In this document, we aim at describing how, in AA0.5, the P4 switch will provide ARP legacy
@@ -11,7 +11,7 @@ switch can be configured to provide this interfacing.
 
 
 Using ARP to help SDP topology
-###############
+##############################
 
 For the downstream integration with SDP, Low.CBF needs to before sending any data to discover the MAC address associated to a given SDP node as shown in the diagram below from `ECP-210085 - CBF, PSS, PST to obtain the destination MAC address using ARP <https://confluence.skatelescope.org/display/CMI/ECP-210085+-+CBF%2C+PSS%2C+PST+to+obtain+the+destination+MAC+address+using+ARP>`_.
 
@@ -22,7 +22,7 @@ For the downstream integration with SDP, Low.CBF needs to before sending any dat
 As a result, we foresee that the ARP integration for communication to SDP could be achieved as follows:
 
 * Low CBF receives Correlator configuration alongside destination IP addresses for the various outputs (from TM subarray LMC via CSP&CBF subarray LMC)
-* Low.CBF allocator configures Alveos and P4 switch accordingly
+* Low CBF allocator configures Alveos and P4 switch accordingly
 * P4 switch configuration consists in routing port and/or destination IP address that match the various configuration. In more details:
     * Configuration is done via Tango which in turn configures the SKA connector
     * SKA connector would:
@@ -73,7 +73,7 @@ on the Target IP address. This target IP address represents:
 
 
 Answering ARP requests from SPS
-++++++++++++++++
+++++++++++++++++++++++++++++++++
 
 In order to receive data from SPS, Low.CBF might need to answer to ARP requests.
 These replies are generated inside the I/O switch in Low CBF via the dedicated routing table. In this table, the P4 switch will:
@@ -103,7 +103,7 @@ SKA represents the full CBF block.
     }
 
 Sending ARP requests to SDP
-++++++++++++++++
+++++++++++++++++++++++++++++++++
 
 In order to provide the topology discovery via ARP in the downstream network, Low CBF
 needs to send periodically ARP requests to every ports connecting the Low CBF to the SDP.
@@ -128,7 +128,7 @@ This multicast is using the dedicated multicast group number 2 where number 1 is
 and > 2 by the SPS to CBF traffic in AA0.5.
 
 Receiving replies from SDP
-++++++++++++++++
+++++++++++++++++++++++++++++++++
 
 The final action is slightly more complex as we aim at extracting 2 information from the
 SDP replies. First we want to capture the MAC address of a given IP address so that we

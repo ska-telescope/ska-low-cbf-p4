@@ -1,6 +1,6 @@
-******************
+************************************
 Interfacing with SPS in AA0.5
-******************
+************************************
 
 In this document, we aim at describing, in AA0.5, the P4 switch tables associated with
 routing SPS traffic, in particular the 2 modeus operanti (unicast vs multiplier).
@@ -25,7 +25,7 @@ LFAA routing
 ################
 
 Incoming traffic
-==============
+================
 
 In the context of AA0.5, SPS will be constituted of 6 stations. From this stations, it will generate traffic over a
 75MHz bandwidth with two 16-bits polarisations oversampled at 32/27. As a results this will generate 17Gbps of raw data.
@@ -59,7 +59,7 @@ In particular, the P4 switch will route traffic using the <beam_id, frequency_id
 This routing is done by leveraging two tables as we detail below.
 
 SPEAD Unicast Table
-==============
+===================
 
 In order to route SPEAD traffic from SPS, the original unicast table called "spead_table"
 was introduced. In this table, the traffic is routed using the <beam_id, frequency_id,
@@ -100,7 +100,7 @@ action is recording the packet number to detect potential losses.
     }
 
 SPEAD Multiplier Table
-==============
+======================
 
 In the more advanced scenario, the P4 is multiplying the traffic so that the same packet
 can reach both the correlator and beamformer. This is done via the "multiplier_spead" table

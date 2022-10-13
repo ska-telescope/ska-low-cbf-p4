@@ -1,6 +1,6 @@
-******************
+************************************
 SDP Traffic routing in AA0.5
-******************
+************************************
 
 
 In this document, we aim at describing how, in AA0.5, the P4 switch will route Visibility data
