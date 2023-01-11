@@ -31,6 +31,8 @@ struct metadata_t {
     bit<1>      l3;    // Set if routed
     bit<48>     timestamp;
     ipv4_addr_t dst_ip;
+    ipv4_addr_t src_ip;
+    mac_addr_t  dst_mac_addr; //
     bool        is_my_ip;
     mac_addr_t  src_eth_addr;
     bool        pingable;
@@ -40,12 +42,13 @@ struct metadata_t {
     bit<4>      packet_type_ingress;
     bit<32>     last_spead_packet;
     bit<32>     losses;
-    bit<32>     origin_tstamp_up;
-    bit<32>     origin_tstamp_down;
     bit<32>     total_bytes_telemetry;
     bit<32>     elapsed_time;
     bit<32>     current_tstamp_telemetry;
     bit<32>     previous_tstamp_telemetry;
+    bit<16>     frequency_no;
+    bit<16>     beam_no;
+    bit<8>      sub_array;
     MirrorId_t  ing_mir_ses;
     pkt_type_t  pkt_type;
 
@@ -76,6 +79,7 @@ header mirror_bridged_metadata_h {
     MirrorId_t egr_mir_ses;   // Egress mirror session ID
     bit<32> timestamp;
     bit<32> byte_total;
+    bit<4>  packet_type_ingress;
 
 }
 
@@ -84,6 +88,9 @@ header mirror_h {
   bit<32>     current_tstamp_telemetry;
   bit<32>     previous_tstamp_telemetry;
   bit<32>     total_bytes_telemetry;
+  bit<16>     frequency_no;
+  bit<16>     beam_no;
+  bit<8>      sub_array;
 
 }
 

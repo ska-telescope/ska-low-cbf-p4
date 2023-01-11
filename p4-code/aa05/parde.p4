@@ -22,6 +22,28 @@ parser IngressParser(
         tofino_parser.apply(pkt, ig_intr_md);
         ig_md.timestamp = ig_intr_md.ingress_mac_tstamp;
         ig_md.is_my_ip = false;
+        ig_md.ifid = (bit<32>) 0;  // Logical Interface ID
+        ig_md.brid = (bit<16>) 0;  // Bridging Domain ID
+        ig_md.vrf = (bit<16>) 0;   // VRF ID
+        ig_md.l3 = 0;    // Set if routed
+        ig_md.dst_ip = 0;
+        ig_md.src_ip = 0;
+        ig_md.dst_mac_addr = 0; //
+        ig_md.src_eth_addr = 0;
+        ig_md.pingable = true;
+        ig_md.l4_src_port = 0;
+        ig_md.l4_dst_port = 0;
+        ig_md.last_spead_packet = 0;
+        ig_md.losses = 0;
+        ig_md.total_bytes_telemetry = 0;
+        ig_md.elapsed_time = 0;
+        ig_md.current_tstamp_telemetry = (bit<32>) 0;
+        ig_md.previous_tstamp_telemetry = (bit<32>) 0;
+        ig_md.frequency_no = 0;
+        ig_md.beam_no = (bit<16>) 0;
+        ig_md.sub_array = 0;
+        ig_md.ing_mir_ses = 0;
+        ig_md.pkt_type = 0;
 
         transition parse_ethernet;
     }
@@ -49,6 +71,7 @@ parser IngressParser(
     state parse_arp {
         pkt.extract(hdr.arp);
         ig_md.dst_ip = hdr.arp.tpa;
+        ig_md.src_ip = hdr.arp.spa;
         ig_md.packet_type_ingress = 1;
         transition accept;
     }
@@ -135,7 +158,7 @@ control IngressDeparser(
     //pkt.emit(hdr.bridged_md);
     apply{
         if (ig_dprsr_md.mirror_type == MIRROR_TYPE_I2E) {
-            mirror.emit<mirror_h>(ig_md.ing_mir_ses, {ig_md.pkt_type, ig_md.current_tstamp_telemetry, ig_md.previous_tstamp_telemetry, ig_md.total_bytes_telemetry});
+            mirror.emit<mirror_h>(ig_md.ing_mir_ses, {ig_md.pkt_type, ig_md.current_tstamp_telemetry, ig_md.previous_tstamp_telemetry, ig_md.total_bytes_telemetry, ig_md.frequency_no, ig_md.beam_no, ig_md.sub_array});
         }
         pkt.emit(hdr);
 
@@ -158,6 +181,34 @@ parser EgressParser(
         tofino_parser.apply(pkt, eg_intr_md);
         //ig_md.timestamp = ig_intr_md.ingress_mac_tstamp;
         //ig_md.is_my_ip = false;
+                eg_md.timestamp = 0;
+                eg_md.is_my_ip = false;
+                eg_md.ifid = (bit<32>) 0;  // Logical Interface ID
+                eg_md.brid = (bit<16>) 0;  // Bridging Domain ID
+                eg_md.vrf = (bit<16>) 0;   // VRF ID
+                eg_md.l3 = 0;    // Set if routed
+
+                eg_md.dst_ip = 0;
+                eg_md.src_ip = 0;
+                eg_md.dst_mac_addr = 0; //
+
+                eg_md.src_eth_addr = 0;
+                eg_md.pingable = true;
+                eg_md.l4_src_port = 0;
+                eg_md.l4_dst_port = 0;
+                    // type 0-unknown, 1-ARP, 2-ICMP, 3-IP(non UDP), 4-UDP(other), 5-SPEAD, 6-PSR
+                eg_md.packet_type_ingress = 0;
+                eg_md.last_spead_packet = 0;
+                eg_md.losses = 0;
+                eg_md.total_bytes_telemetry = 0;
+                eg_md.elapsed_time = 0;
+                eg_md.current_tstamp_telemetry = 0;
+                eg_md.previous_tstamp_telemetry = 0;
+                eg_md.frequency_no = 0;
+                eg_md.beam_no = 0;
+                eg_md.sub_array = 0;
+                eg_md.ing_mir_ses = 0;
+                eg_md.pkt_type = 0;
 
         transition parse_metadata;
     }
@@ -184,6 +235,9 @@ parser EgressParser(
         eg_md.previous_tstamp_telemetry = mirror_md.previous_tstamp_telemetry;
         eg_md.current_tstamp_telemetry = mirror_md.current_tstamp_telemetry;
         eg_md.total_bytes_telemetry = mirror_md.total_bytes_telemetry;
+        eg_md.frequency_no = mirror_md.frequency_no;
+        eg_md.beam_no = mirror_md.beam_no;
+        eg_md.sub_array = mirror_md.sub_array;
         transition parse_ethernet;
     }
 
@@ -193,7 +247,6 @@ parser EgressParser(
             ETHERTYPE_IPV4 : parse_ipv4;
             ETHERTYPE_ARP  : parse_arp;
             ETHERTYPE_PTP : parse_ptp;
-            // ETHERTYPE_IPV6 : accept;
             default : parse_unknown;
         }
     }
@@ -209,7 +262,6 @@ parser EgressParser(
     }
     state parse_arp {
         pkt.extract(hdr.arp);
-        //ig_md.dst_ip = hdr.arp.tpa;
         eg_md.packet_type_ingress = 1;
         transition accept;
     }
@@ -234,40 +286,7 @@ parser EgressParser(
     }
 
     state parse_udp {
-         pkt.extract(hdr.udp);
-         transition select(hdr.udp.dst_port) {
-             UDP_SPEAD : parse_spead;
-             UDP_PSR : parse_psr;
-             default : parse_other;
-         }
-    //    transition parse_psr;
-    }
-    state parse_other{
-        eg_md.packet_type_ingress  = 4;
-        transition accept;
-    }
-
-    state parse_spead {
-        pkt.extract(hdr.spead);
-        eg_md.packet_type_ingress  = 5;
-        eg_md.losses = 0;
-        eg_md.last_spead_packet = hdr.spead.heap_counter;
-        transition parse_channel_info;
-    }
-
-    state parse_channel_info {
-        pkt.extract(hdr.channel);
-        transition parse_station_info;
-    }
-
-    state parse_station_info {
-        pkt.extract(hdr.station);
-        transition accept;
-    }
-
-    state parse_psr {
-        eg_md.packet_type_ingress  = 6;
-        pkt.extract(hdr.psr);
+        pkt.extract(hdr.udp);
         transition accept;
     }
 
