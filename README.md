@@ -15,6 +15,10 @@ from the Low CBF network directory and is now independent of the controler of th
 
 # Changelog
 
+### 0.4.6
+* Updated ansible scripts to SDE 9.9
+* Updated P4 code to 9.9
+
 ### 0.4.4
 * Ansible scripts to install necessary software on the P4 switch
 
