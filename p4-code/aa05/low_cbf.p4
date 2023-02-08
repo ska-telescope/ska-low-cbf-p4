@@ -200,7 +200,7 @@ control Ingress(
             set_ifid;
         }
 
-        size = 1024;
+        size = 512;
     }
 
     @name(".set_ifid_corr")
@@ -304,28 +304,6 @@ control Ingress(
         size = 1024;
     }
 
-    @name(".mcast_route")
-    action mcast_route(bit<16> xid, MulticastGroupId_t mgid1, MulticastGroupId_t mgid2) {
-        ig_tm_md.level1_exclusion_id = xid;
-        ig_tm_md.mcast_grp_a = mgid1;
-        ig_tm_md.mcast_grp_b = mgid2;
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-    }
-
-    @name(".ing_ipv4_mcast")
-    table ing_ipv4_mcast {
-        key = {
-            ig_md.vrf   : exact;
-            hdr.ipv4.src_addr : ternary;
-            hdr.ipv4.dst_addr : ternary;
-        }
-
-        actions = {
-            mcast_route;
-        }
-
-        size = 1024;
-    }
     @name(".answer_arp_request")
     action answer_arp_request(mac_addr_t my_eth_addr) {
         direct_counter_arp.count();
@@ -372,6 +350,8 @@ control Ingress(
         hdr.arp_resolution.dst_ip_addr = hdr.arp.spa;
         direct_counter_arp.count();
         ig_tm_md.ucast_egress_port = dest_port;
+
+
 
     }
 
@@ -438,7 +418,7 @@ control Ingress(
             set_egr_port_ptp;
             @defaultonly nop;
         }
-        size = SPEAD_TABLE_SIZE;
+        size = 512;
         const default_action = nop;
         //registers = reg_losses;
 
@@ -482,6 +462,9 @@ control Ingress(
                 ig_md.current_tstamp_telemetry = ig_md.timestamp[31:0];
                 ig_md.previous_tstamp_telemetry = last_time;
                 ig_md.ing_mir_ses = 27;
+                ig_md.frequency_no = hdr.channel.frequency_no;
+                ig_md.beam_no = hdr.channel.beam_no;
+                ig_md.sub_array = hdr.station.sub_array;
                 ig_dprsr_md.mirror_type = MIRROR_TYPE_I2E;
                 ig_md.pkt_type = PKT_TYPE_MIRROR;
             }
@@ -500,7 +483,7 @@ control Ingress(
         if (ig_md.packet_type_ingress == 1){
             arp_table.apply();
         }
-        
+
         ing_src_ifid.apply();
         ing_dmac.apply();
 
@@ -539,9 +522,9 @@ control Egress(
         hdr.udp.hdr_length = 98;
         hdr.udp.checksum = 0;
         hdr.telemetry_spead.setValid();
-        hdr.telemetry_spead.frequency_no = hdr.channel.frequency_no;
-        hdr.telemetry_spead.beam_no = hdr.channel.beam_no;
-        hdr.telemetry_spead.sub_array = hdr.station.sub_array;
+        hdr.telemetry_spead.frequency_no = eg_md.frequency_no;
+        hdr.telemetry_spead.beam_no = eg_md.beam_no;
+        hdr.telemetry_spead.sub_array = eg_md.sub_array;
         hdr.telemetry_spead.total_bytes_telemetry = eg_md.total_bytes_telemetry;
         hdr.telemetry_spead.current_tstamp_telemetry = eg_md.current_tstamp_telemetry;
         hdr.telemetry_spead.previous_tstamp_telemetry = eg_md.previous_tstamp_telemetry;

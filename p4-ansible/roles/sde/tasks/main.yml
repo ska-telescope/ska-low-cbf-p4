@@ -1,8 +1,12 @@
 ---
   - name: Update timezone
+    become: yes
+    become_method: sudo
     script: dpkg-reconfigure/tzdata.sh
 
   - name: Disable ssh password authentication
+    become: yes
+    become_method: sudo
     lineinfile:
       dest: /etc/ssh/sshd_config
       regexp: "^#PasswordAuthentication"
@@ -19,6 +23,8 @@
       state: directory
 
   - name: Install some useful packages
+    become: yes
+    become_method: sudo
     apt:
       name: "{{ packages }}"
     vars:
@@ -26,25 +32,30 @@
       - htop
       - tmux
       - man-db
+      - python3-pip
+
+  - name: Install some necessary pip packages
+    pip:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - click_logging
+      - cmakeast
 
   - name: Add hugepages configuration
+    become: yes
+    become_method: sudo
     sysctl:
       name: vm.nr_hugepages
       value: '128'
-      reload: yes
-
-  - name: Disable ipv6 on ma1 interface
-    sysctl:
-      name: net.ipv6.conf.ma1.disable_ipv6
-      value: '1'
       reload: yes
 
   - name: Update ~/.profile
     blockinfile:
       path: /home/{{ username }}/.profile
       block: |
-        export SDE="/home/{{ username }}/sde/bf-sde-9.7.0"
-        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.7.0/install"
+        export SDE="/home/{{ username }}/sde/bf-sde-9.9.0"
+        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.9.0/install"
         export PATH="$PATH:$SDE_INSTALL/bin"
 
 
@@ -58,16 +69,16 @@
 
   - name: Copy bf-sde
     copy:
-      src: sde/bf-sde-9.7.0.tgz
-      dest: /home/{{ username }}/sde/bf-sde-9.7.0.tgz
+      src: sde/bf-sde-9.9.0.tgz
+      dest: /home/{{ username }}/sde/bf-sde-9.9.0.tgz
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0755'
 
   - name: Copy aps-bsp
     copy:
-      src: sde/apsn-bsp-bf6064x-9.7.0_1.tgz
-      dest: /home/{{ username }}/sde/apsn-bsp-bf6064x-9.7.0_1.tgz
+      src: sde/bf-reference-bsp-9.9.0.tgz
+      dest: /home/{{ username }}/sde/bf-reference-bsp-9.9.0.tgz
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0755'
@@ -91,11 +102,11 @@
 
   - name: Extract SDE file
     unarchive:
-      src: /home/{{ username }}/sde/bf-sde-9.7.0.tgz
+      src: /home/{{ username }}/sde/bf-sde-9.9.0.tgz
       dest: /home/{{ username }}/sde/
       remote_src: yes
 
   - name: compile SDE
     ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/apsn.yaml
     args:
-      chdir: /home/{{ username }}/sde/bf-sde-9.7.0
+      chdir: /home/{{ username }}/sde/bf-sde-9.9.0/p4studio/
