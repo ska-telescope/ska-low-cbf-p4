@@ -15,6 +15,12 @@ from the Low CBF network directory and is now independent of the controler of th
 
 # Changelog
 
+### 0.4.7
+* Updated ansible scripts to SDE 9.11.2
+* Updated P4 code to 9.11.2
+* Deactivation of advanced telemetry for a while because of changes in SDE 9.11.2
+* Code for tofino 2
+
 ### 0.4.6
 * Updated ansible scripts to SDE 9.9
 * Updated P4 code to 9.9
