@@ -54,8 +54,8 @@
     blockinfile:
       path: /home/{{ username }}/.profile
       block: |
-        export SDE="/home/{{ username }}/sde/bf-sde-9.9.0"
-        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.9.0/install"
+        export SDE="/home/{{ username }}/sde/bf-sde-9.11.2"
+        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.11.2/install"
         export PATH="$PATH:$SDE_INSTALL/bin"
 
 
@@ -69,44 +69,36 @@
 
   - name: Copy bf-sde
     copy:
-      src: sde/bf-sde-9.9.0.tgz
-      dest: /home/{{ username }}/sde/bf-sde-9.9.0.tgz
+      src: sde/bf-sde-9.11.2.tgz
+      dest: /home/{{ username }}/sde/bf-sde-9.11.2.tgz
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0755'
 
   - name: Copy aps-bsp
     copy:
-      src: sde/bf-reference-bsp-9.9.0.tgz
-      dest: /home/{{ username }}/sde/bf-reference-bsp-9.9.0.tgz
+      src: sde/bf-reference-bsp-9.11.2.tgz
+      dest: /home/{{ username }}/sde/bf-reference-bsp-9.11.2.tgz
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0755'
 
 
-  - name: Copy aps-ptp-daemon
+  - name: Copy ska config yaml
     copy:
-      src: sde/apsn-ptpd_0.9.0-bionic_amd64.deb
-      dest: /home/{{ username }}/sde/apsn-ptpd_0.9.0-bionic_amd64.deb
-      owner: "{{ username }}"
-      group: "{{ username }}"
-      mode: '0755'
-
-  - name: Copy aps-bsp config yaml
-    copy:
-      src: sde/apsn.yaml
-      dest: /home/{{ username }}/sde/apsn.yaml
+      src: sde/ska.yaml
+      dest: /home/{{ username }}/sde/ska.yaml
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0644'
 
   - name: Extract SDE file
     unarchive:
-      src: /home/{{ username }}/sde/bf-sde-9.9.0.tgz
+      src: /home/{{ username }}/sde/bf-sde-9.11.2.tgz
       dest: /home/{{ username }}/sde/
       remote_src: yes
 
   - name: compile SDE
     ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/apsn.yaml
     args:
-      chdir: /home/{{ username }}/sde/bf-sde-9.9.0/p4studio/
+      chdir: /home/{{ username }}/sde/bf-sde-9.11.2/p4studio/

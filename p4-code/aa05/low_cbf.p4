@@ -2,7 +2,7 @@
 
 
 #include <core.p4>
-#include <tna.p4>
+#include <t2na.p4>
 #include "const.p4"
 #include "parde.p4"
 
@@ -443,6 +443,7 @@ control Ingress(
         if (ig_md.packet_type_ingress == 5){
             multiplier_spead.apply();
             spead_table.apply();
+            /* Removing advanced telemetry until we can have it back with latest SDE
             bit<16> result;
             result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no});
             bit<32> total;
@@ -472,6 +473,7 @@ control Ingress(
             if (ig_md.last_spead_packet != ig_md.losses ){
                 counter_spead_losses.count(hdr.channel.frequency_no++hdr.channel.beam_no++hdr.station.sub_array);
             }
+            */
 
         }
 
@@ -480,7 +482,7 @@ control Ingress(
             ptp_table.apply();
         }
 
-        if (ig_md.packet_type_ingress == 1){
+        if (hdr.arp.isValid()){
             arp_table.apply();
         }
 
