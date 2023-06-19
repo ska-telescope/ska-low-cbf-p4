@@ -2,7 +2,11 @@
 
 
 #include <core.p4>
+#if __TARGET_TOFINO__ == 2
 #include <t2na.p4>
+#else
+#include <tna.p4>
+#endif
 #include "const.p4"
 #include "parde.p4"
 
@@ -49,6 +53,8 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead;
     @name(".counter_spead_corr")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead_corr;
+    @name(".direct_counter_ipv4")
+    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_ipv4;
     @name(".counter")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_2;
     @name(".counter_arp")
@@ -408,6 +414,52 @@ control Ingress(
 
     }
 
+    @name(".forward_ip")
+    action forward_ip(PortId_t dest_port) {
+        direct_counter_ipv4.count();
+        ig_tm_md.ucast_egress_port = dest_port;
+
+    }
+
+
+    @name(".forward_ip_table")
+    table forward_ip_table {
+        key = {
+            hdr.ipv4.dst_addr : exact @name("sdp_ip");
+        }
+        actions = {
+            forward_ip;
+            @defaultonly nop;
+        }
+        size = SPEAD_TABLE_SIZE;
+        const default_action = nop;
+        //registers = reg_losses;
+        counters = direct_counter_ipv4;
+
+    }
+
+    @name(".change_mac_dst")
+    action change_mac_dst(mac_addr_t mac_add) {
+        hdr.ethernet.dst_addr = mac_add;
+
+    }
+
+
+    @name(".change_mac_dst_table")
+    table change_mac_dst_table {
+        key = {
+            hdr.ipv4.dst_addr : exact @name("sdp_ip");
+        }
+        actions = {
+            change_mac_dst;
+            @defaultonly nop;
+        }
+        size = SPEAD_TABLE_SIZE;
+        const default_action = nop;
+        //registers = reg_losses;
+
+    }
+
 
     @name(".ptp_table")
     table ptp_table {
@@ -474,6 +526,11 @@ control Ingress(
                 counter_spead_losses.count(hdr.channel.frequency_no++hdr.channel.beam_no++hdr.station.sub_array);
             }
             */
+
+        }
+        if (ig_md.packet_type_ingress == 4){
+            change_mac_dst_table.apply();
+            forward_ip_table.apply();
 
         }
 

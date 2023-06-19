@@ -1,6 +1,8 @@
 ---
 - hosts: switches
-  remote_user: perentie
+  remote_user: jou008
+  become: yes
+  become_method: sudo
   vars:
     home_dir: "/home/{{ username }}"
     keys_file: "{{ home_dir }}/.ssh/authorized_keys"
