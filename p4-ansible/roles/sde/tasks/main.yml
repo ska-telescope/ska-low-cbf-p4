@@ -99,6 +99,6 @@
       remote_src: yes
 
   - name: compile SDE
-    ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/apsn.yaml
+    ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/ska.yaml
     args:
       chdir: /home/{{ username }}/sde/bf-sde-9.11.2/p4studio/
