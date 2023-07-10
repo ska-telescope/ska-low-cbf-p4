@@ -50,7 +50,7 @@ is introduced. In this table, the traffic is routed using the destination IP add
     }
 
 If a packet is matched the action "forward_ip" is applied. In this action, the
-destination port to either the correct SDP pod.
+destination port to configured to the corresponding SDP pod.
 
 .. code-block:: none
 
