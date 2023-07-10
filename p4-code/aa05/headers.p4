@@ -198,7 +198,8 @@ header channel_info_h {
 }
 
 header station_info_h {
-    bit<24> pad;
+    bit<16> antenna_info;
+    bit<8> sub_station;
     bit<8> sub_array;
     bit<16> station_no;
     bit<16> num_antennas;
