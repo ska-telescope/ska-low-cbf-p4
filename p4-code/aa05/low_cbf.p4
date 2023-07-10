@@ -420,8 +420,6 @@ control Ingress(
         ig_tm_md.ucast_egress_port = dest_port;
 
     }
-
-
     @name(".forward_ip_table")
     table forward_ip_table {
         key = {
@@ -437,14 +435,11 @@ control Ingress(
         counters = direct_counter_ipv4;
 
     }
-
     @name(".change_mac_dst")
     action change_mac_dst(mac_addr_t mac_add) {
         hdr.ethernet.dst_addr = mac_add;
 
     }
-
-
     @name(".change_mac_dst_table")
     table change_mac_dst_table {
         key = {
@@ -457,7 +452,6 @@ control Ingress(
         size = SPEAD_TABLE_SIZE;
         const default_action = nop;
         //registers = reg_losses;
-
     }
 
 
