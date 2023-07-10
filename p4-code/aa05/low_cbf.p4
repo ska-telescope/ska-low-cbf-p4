@@ -473,7 +473,7 @@ control Ingress(
 
     // Table used only during commissioning to test what happen when we emulate the disconnection of
     // an entire sub_station
-    @name(".sub_station")
+    @name(".sub_station_station")
     table sub_station_table {
         key = {
             hdr.station.sub_station: exact @name("sub_station");
