@@ -503,7 +503,7 @@ control Ingress(
         if (ig_md.packet_type_ingress == 5){
             multiplier_spead.apply();
             spead_table.apply();
-            sub_station.apply();
+            sub_station_table.apply();
             /* Removing advanced telemetry until we can have it back with latest SDE
             bit<16> result;
             result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no});
