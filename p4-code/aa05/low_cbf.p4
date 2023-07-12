@@ -489,7 +489,7 @@ control Ingress(
     // Table used only during commissioning to test what happen when we emulate the disconnection of
     // an entire sub_station
     @name(".swap")
-    action swap(bit<8> new_sub_station, <bit 16> new_station) {
+    action swap(bit<8> new_sub_station, bit<16> new_station) {
         hdr.station.sub_station = new_sub_station;
         hdr.station.station_no = new_station;
 
