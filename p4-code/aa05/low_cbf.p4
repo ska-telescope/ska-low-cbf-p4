@@ -486,6 +486,30 @@ control Ingress(
         const default_action = nop;
     }
 
+    // Table used only during commissioning to test what happen when we emulate the disconnection of
+    // an entire sub_station
+    @name(".swap")
+    action swap(bit<8> new_sub_station, <bit 16> new_station) {
+        hdr.station.sub_station = new_sub_station;
+        hdr.station.station_no = new_station;
+
+
+    }
+
+    @name(".sub_station_swap_table")
+    table sub_stationswap_table {
+        key = {
+            hdr.station.sub_station: exact @name("sub_station");
+        }
+        actions = {
+            swap;
+            @defaultonly nop;
+        }
+        size = SPEAD_TABLE_SIZE;
+        const default_action = nop;
+    }
+
+
 
     apply {
         //<bit 13> = <bit4> ++ <bit9>
