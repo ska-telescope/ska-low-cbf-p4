@@ -516,7 +516,7 @@ control Ingress(
         counter_ingress_type.count(ig_md.packet_type_ingress++ig_intr_md.ingress_port);
         ing_port_table.apply();//generic table
 
-        ing_port.apply();//setting the scene for multicast
+        //setting the scene for multicast
 
 
 
@@ -569,6 +569,7 @@ control Ingress(
 
 
         if (ig_md.packet_type_ingress == 7){
+            ing_port.apply();
             ptp_table.apply();
         }
 
