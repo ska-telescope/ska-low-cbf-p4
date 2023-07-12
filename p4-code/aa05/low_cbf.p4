@@ -497,7 +497,7 @@ control Ingress(
     }
 
     @name(".sub_station_swap_table")
-    table sub_stationswap_table {
+    table sub_station_swap_table {
         key = {
             hdr.station.sub_station: exact @name("sub_station");
         }
@@ -528,6 +528,7 @@ control Ingress(
             multiplier_spead.apply();
             spead_table.apply();
             sub_station_table.apply();
+            sub_station_swap_table.apply();
             /* Removing advanced telemetry until we can have it back with latest SDE
             bit<16> result;
             result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no});
