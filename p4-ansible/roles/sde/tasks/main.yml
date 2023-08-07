@@ -54,8 +54,8 @@
     blockinfile:
       path: /home/{{ username }}/.profile
       block: |
-        export SDE="/home/{{ username }}/sde/bf-sde-9.11.2"
-        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.11.2/install"
+        export SDE="/home/{{ username }}/sde/bf-sde-9.13.0"
+        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.13.0/install"
         export PATH="$PATH:$SDE_INSTALL/bin"
 
 
@@ -70,7 +70,7 @@
   - name: Copy bf-sde
     copy:
       src: sde/bf-sde-9.11.2.tgz
-      dest: /home/{{ username }}/sde/bf-sde-9.11.2.tgz
+      dest: /home/{{ username }}/sde/bf-sde-9.13.0.tgz
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0755'
@@ -78,7 +78,7 @@
   - name: Copy aps-bsp
     copy:
       src: sde/bf-reference-bsp-9.11.2.tgz
-      dest: /home/{{ username }}/sde/bf-reference-bsp-9.11.2.tgz
+      dest: /home/{{ username }}/sde/bf-reference-bsp-9.13.0.tgz
       owner: "{{ username }}"
       group: "{{ username }}"
       mode: '0755'
@@ -94,7 +94,7 @@
 
   - name: Extract SDE file
     unarchive:
-      src: /home/{{ username }}/sde/bf-sde-9.11.2.tgz
+      src: /home/{{ username }}/sde/bf-sde-9.13.0.tgz
       dest: /home/{{ username }}/sde/
       remote_src: yes
 

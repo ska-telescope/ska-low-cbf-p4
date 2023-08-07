@@ -473,7 +473,7 @@ control Ingress(
 
     // Table used only during commissioning to test what happen when we emulate the disconnection of
     // an entire sub_station
-    @name(".sub_station")
+    @name(".sub_station_table")
     table sub_station_table {
         key = {
             hdr.station.sub_station: exact @name("sub_station");
@@ -486,13 +486,37 @@ control Ingress(
         const default_action = nop;
     }
 
+    // Table used only during commissioning to test what happen when we emulate the disconnection of
+    // an entire sub_station
+    @name(".swap")
+    action swap(bit<8> new_sub_station, bit<16> new_station) {
+        hdr.station.sub_station = new_sub_station;
+        hdr.station.station_no = new_station;
+
+
+    }
+
+    @name(".sub_station_swap_table")
+    table sub_station_swap_table {
+        key = {
+            hdr.station.sub_station: exact @name("sub_station");
+        }
+        actions = {
+            swap;
+            @defaultonly nop;
+        }
+        size = SPEAD_TABLE_SIZE;
+        const default_action = nop;
+    }
+
+
 
     apply {
         //<bit 13> = <bit4> ++ <bit9>
         counter_ingress_type.count(ig_md.packet_type_ingress++ig_intr_md.ingress_port);
         ing_port_table.apply();//generic table
 
-        ing_port.apply();//setting the scene for multicast
+        //setting the scene for multicast
 
 
 
@@ -504,6 +528,7 @@ control Ingress(
             multiplier_spead.apply();
             spead_table.apply();
             sub_station_table.apply();
+            sub_station_swap_table.apply();
             /* Removing advanced telemetry until we can have it back with latest SDE
             bit<16> result;
             result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no});
@@ -545,6 +570,7 @@ control Ingress(
 
 
         if (ig_md.packet_type_ingress == 7){
+            ing_port.apply();
             ptp_table.apply();
         }
 
