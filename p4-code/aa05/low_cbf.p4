@@ -667,7 +667,7 @@ Pipeline(
 ) pipe;
 
 // instantiate the package Switch with a single pipeline
-@pkginfo(name="low_cbf", version="0.4.5")
+@pkginfo(name="low_cbf", version="0.5.0)
 @pkginfo(organization="CSIRO")
 @pkginfo(contact="guillaume.jourjon@csiro.au")
 @brief("Low CBF P4 rules for AA0.5")
