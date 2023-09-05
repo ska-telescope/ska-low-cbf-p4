@@ -15,6 +15,9 @@ from the Low CBF network directory and is now independent of the controler of th
 
 # Changelog
 
+### 0.5.1
+* typo in metadata fixed
+
 ### 0.5.0
 * Updated ansible scripts to SDE 9.13.0
 * Updated P4 code to 9.13.0
