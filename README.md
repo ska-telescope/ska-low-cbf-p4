@@ -15,6 +15,9 @@ from the Low CBF network directory and is now independent of the controler of th
 
 # Changelog
 
+### 0.5.2
+* yaml file for SDE compatible with 9.13.0
+
 ### 0.5.1
 * typo in metadata fixed
 
