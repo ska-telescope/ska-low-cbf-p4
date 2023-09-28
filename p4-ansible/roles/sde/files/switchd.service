@@ -1,0 +1,15 @@
+[Unit]
+Description=p4 switchd agent
+Documentation=https://www.csiro.au/en/research/technology-space/astronomy-space
+PartOf=network.target
+
+[Service]
+Type=forking
+User=perentie
+Environment= TZ=UTC
+EnvironmentFile=/etc/default/ska-p4-env
+ExecStart=/usr/local/bin/switchd_wrapper.sh
+Restart=always
+
+[Install]
+WantedBy=network.target
