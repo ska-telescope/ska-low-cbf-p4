@@ -137,3 +137,9 @@
     name: switchd
     state: started
     daemon_reload: true
+
+- name: Create required directories
+  file:
+    path:  /var/log/ska
+    state: directory
+    mode: '0755'
