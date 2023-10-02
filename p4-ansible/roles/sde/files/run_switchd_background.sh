@@ -110,7 +110,7 @@ SKIP_STATUS_SRV=false
 ASAN_ON_ERROR=""
 INIT_MODE="cold"
 REDIRECTLOG=""
-CHIP_ARCH="Tofino"
+CHIP_ARCH="Tofino2"
 SHELL_NO_WAIT=""
 BACKGROUND=""
 while true; do
