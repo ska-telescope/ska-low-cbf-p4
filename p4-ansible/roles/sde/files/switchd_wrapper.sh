@@ -23,4 +23,4 @@ do
 
 done
 
-/usr/local/bin/run_switchd_background.sh -p tna_codif --server-listen-local-only --background > ${LOG_FILE} 2>&1 &
+/usr/local/bin/run_switchd_background.sh --arch tf2 -p low_cbf --server-listen-local-only --background > ${LOG_FILE} 2>&1 &
