@@ -142,4 +142,4 @@
   file:
     path:  /var/log/ska
     state: directory
-    mode: '0755'
+    mode: '0777'
