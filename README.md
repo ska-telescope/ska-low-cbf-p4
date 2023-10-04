@@ -15,6 +15,9 @@ from the Low CBF network directory and is now independent of the controler of th
 
 # Changelog
 
+### Unreleased
+* add switchd systemd service scripts and modify 'sde' role tasks to install it
+
 ### 0.5.2
 * yaml file for SDE compatible with 9.13.0
 

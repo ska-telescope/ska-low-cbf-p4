@@ -1,104 +1,145 @@
 ---
-  - name: Update timezone
-    become: yes
-    become_method: sudo
-    script: dpkg-reconfigure/tzdata.sh
+# We'll use the value of SDE_VERSION (defined in ska-p4-env) in subsequent tasks
+- name: Copy environment variables
+  copy:
+    src: ska-p4-env
+    dest: /etc/default/
+    mode: '0644'
 
-  - name: Disable ssh password authentication
-    become: yes
-    become_method: sudo
-    lineinfile:
-      dest: /etc/ssh/sshd_config
-      regexp: "^#PasswordAuthentication"
-      line: "PasswordAuthentication no"
-      backrefs: yes
-      state: present
-    notify: Restart ssh
+- name: Fetch the SDE_VERSION value
+  set_fact:
+    sde_version: "{{ lookup('file', '/etc/default/ska-p4-env') | regex_replace( '.*\\n*SDE_VERSION=\\s*([^\\n]+)\\n*.*', '\\1' ) | trim }}"
 
-  - name: Make sde directory
-    file:
-      path: "/home/{{ username }}/sde"
-      owner: "{{ username }}"
-      group: "{{ username }}"
-      state: directory
+- name: Update timezone
+  become: yes
+  become_method: sudo
+  script: dpkg-reconfigure/tzdata.sh
 
-  - name: Install some useful packages
-    become: yes
-    become_method: sudo
-    apt:
-      name: "{{ packages }}"
-    vars:
-      packages:
-      - htop
-      - tmux
-      - man-db
-      - python3-pip
+- name: Disable ssh password authentication
+  become: yes
+  become_method: sudo
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    backrefs: yes
+    state: present
+  notify: Restart ssh
 
-  - name: Install some necessary pip packages
-    pip:
-      name: "{{ packages }}"
-    vars:
-      packages:
-      - click_logging
-      - cmakeast
+- name: Make sde directory
+  file:
+    path: "/home/{{ username }}/sde"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    state: directory
 
-  - name: Add hugepages configuration
-    become: yes
-    become_method: sudo
-    sysctl:
-      name: vm.nr_hugepages
-      value: '128'
-      reload: yes
+- name: Install some useful packages
+  become: yes
+  become_method: sudo
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - htop
+    - tmux
+    - man-db
+    - python3-pip
 
-  - name: Update ~/.profile
-    blockinfile:
-      path: /home/{{ username }}/.profile
-      block: |
-        export SDE="/home/{{ username }}/sde/bf-sde-9.13.0"
-        export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-9.13.0/install"
-        export PATH="$PATH:$SDE_INSTALL/bin"
+- name: Install some necessary pip packages
+  pip:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - click_logging
+    - cmakeast
 
+- name: Add hugepages configuration
+  become: yes
+  become_method: sudo
+  sysctl:
+    name: vm.nr_hugepages
+    value: '128'
+    reload: yes
 
-  - name: Update ~/.bashrc
-    lineinfile:
-      dest: /home/{{ username }}/.bashrc
-      regexp: "^#alias ll='ls -l'"
-      line: "alias ll='ls -l'"
-      backrefs: yes
-      state: present
-
-  - name: Copy bf-sde
-    copy:
-      src: sde/bf-sde-9.11.2.tgz
-      dest: /home/{{ username }}/sde/bf-sde-9.13.0.tgz
-      owner: "{{ username }}"
-      group: "{{ username }}"
-      mode: '0755'
-
-  - name: Copy aps-bsp
-    copy:
-      src: sde/bf-reference-bsp-9.11.2.tgz
-      dest: /home/{{ username }}/sde/bf-reference-bsp-9.13.0.tgz
-      owner: "{{ username }}"
-      group: "{{ username }}"
-      mode: '0755'
+- name: Update ~/.profile
+  blockinfile:
+    path: /home/{{ username }}/.profile
+    block: |
+      export SDE="/home/{{ username }}/sde/bf-sde-{{ sde_version }}"
+      export SDE_INSTALL="/home/{{ username }}/sde/bf-sde-{{ sde_version }}/install"
+      export PATH="$PATH:$SDE_INSTALL/bin"
 
 
-  - name: Copy ska config yaml
-    copy:
-      src: sde/ska.yaml
-      dest: /home/{{ username }}/sde/ska.yaml
-      owner: "{{ username }}"
-      group: "{{ username }}"
-      mode: '0644'
+- name: Update ~/.bashrc
+  lineinfile:
+    dest: /home/{{ username }}/.bashrc
+    regexp: "^#alias ll='ls -l'"
+    line: "alias ll='ls -l'"
+    backrefs: yes
+    state: present
 
-  - name: Extract SDE file
-    unarchive:
-      src: /home/{{ username }}/sde/bf-sde-9.13.0.tgz
-      dest: /home/{{ username }}/sde/
-      remote_src: yes
+- name: Copy bf-sde
+  copy:
+    src: "sde/bf-sde-{{ sde_version }}.tgz"
+    dest: "/home/{{ username }}/sde/bf-sde-{{ sde_version }}.tgz"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
 
-  - name: compile SDE
-    ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/ska.yaml
-    args:
-      chdir: /home/{{ username }}/sde/bf-sde-9.11.2/p4studio/
+- name: Copy aps-bsp
+  copy:
+    src: "sde/bf-reference-bsp-{{ sde_version }}.tgz"
+    dest: "/home/{{ username }}/sde/bf-reference-bsp-{{ sde_version }}.tgz"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+
+- name: Copy ska config yaml
+  copy:
+    src: sde/ska.yaml
+    dest: /home/{{ username }}/sde/ska.yaml
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Extract SDE file
+  unarchive:
+    src: "/home/{{ username }}/sde/bf-sde-{{ sde_version }}.tgz"
+    dest: /home/{{ username }}/sde/
+    remote_src: true
+
+- name: compile SDE
+  ansible.builtin.shell: ./p4studio profile apply /home/{{ username }}/sde/ska.yaml
+  args:
+    chdir: "/home/{{ username }}/sde/bf-sde-{{ sde_version }}/p4studio/"
+
+#
+# Copy files used by switchd.service
+#
+- name: Copy switchd service configuration
+  copy:
+    src: switchd.service
+    dest: /etc/systemd/system/
+    mode: '0644'
+
+- name: Copy the script and its wrapper
+  copy:
+    src: {{ item }}
+    dest: /usr/local/bin/
+    mode: '0755'
+  with_items:
+    - run_switchd_background.sh
+    - switchd_wrapper.sh
+
+- name: Activate the switchd service
+  systemd_service:
+    name: switchd
+    state: started
+    daemon_reload: true
+
+- name: Create required directories
+  file:
+    path:  /var/log/ska
+    state: directory
+    mode: '0777'
