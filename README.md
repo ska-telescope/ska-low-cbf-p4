@@ -1,10 +1,17 @@
 P4 code for SKA Low CBF
-=================
+=======================
+This repository contains the P4 code to deploy the Atomic COTS solution of the SKA Low CBF. This code originates
+from the Low CBF network directory and is now independent of the controler of the P4 switch.
 
+## Documentation
 [![Documentation Status](https://readthedocs.org/projects/ska-telescope-ska-low-cbf-p4/badge/?version=latest)](https://developer.skao.int/projects/ska-low-cbf-p4/en/latest/?badge=latest)
 
-This repository contains the P4 code to deploy the Atomic COTS solution of the SKA Low CBF. This code originates
-from the Low CBF network directory and is now independent of the controler of the P4 switch. 
+The documentation for this project can be found in the `docs` folder, or browsed in the SKA development portal:
+
+* [ska-low-cbf-p4 documentation](https://developer.skatelescope.org/projects/ska-low-cbf-p4/en/latest/index.html "SKA Developer Portal: ska-low-cbf-p4 documentation")
+
+## Project Avatar (Repository Icon)
+[Network switch icons created by Ranah Pixel Studio - Flaticon](https://www.flaticon.com/free-icons/network-switch "network switch icons")
 
 # Developer’s Guide
 
