@@ -1,3 +1,4 @@
+---
 # .readthedocs.yml
 # Read the Docs configuration file
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
@@ -9,8 +10,16 @@ version: 2
 sphinx:
   configuration: docs/src/conf.py
 
-# Optionally set the version of Python and requirements required to build your docs
-python:
-  version: 3.8
-  install:
-    - requirements: docs/requirements.txt
+build:
+  os: "ubuntu-22.04"
+  apt_packages:
+    - plantuml
+  tools:
+    python: "3.10"
+  jobs:
+    # https://docs.readthedocs.io/en/stable/build-customization.html#install-dependencies-with-poetry
+    post_create_environment:
+      - pip install poetry
+      - poetry config virtualenvs.create false
+    post_install:
+      - poetry install --no-root
