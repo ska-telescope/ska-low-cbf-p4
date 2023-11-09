@@ -8,6 +8,13 @@ import sys
 import os
 import typing
 
+# WORKAROUND: https://github.com/sphinx-doc/sphinx/issues/9243
+import sphinx.builders.linkcheck
+import sphinx.builders.html
+import sphinx.builders.latex
+import sphinx.builders.texinfo
+import sphinx.builders.text
+import sphinx.ext.autodoc
 
 # This is an elaborate hack to insert write property into _all_
 # mock decorators. It is needed for getting @attribute to build
@@ -28,15 +35,6 @@ def call_mock(self, *args, **kw):
 
 _MockObject.__call__ = call_mock
 # hack end
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-import sphinx_rtd_theme
 
 
 def setup(app):
@@ -70,6 +68,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "sphinx_autodoc_typehints",
     "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.mathjax",
@@ -114,7 +113,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "ska_ser_sphinx_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -127,14 +126,14 @@ html_theme_options = {
 }
 
 html_context = {
-    "favicon": "img/favicon.ico",
-    "logo": "img/logo.jpg",
-    "theme_logo_only": True,
-    "display_github": True,  # Integrate GitHub
-    "github_user": "ska-telescope",  # Username
-    "github_repo": "ska-low-cbf",  # Repo name
-    "github_version": "main",  # Version
-    "conf_py_path": "/docs/source/",  # Path in the checkout to the docs root
+    # "favicon": "img/favicon.ico",
+    # "logo": "img/logo.jpg",
+    # "theme_logo_only": True,
+    # "display_github": True,  # Integrate GitHub
+    # "github_user": "ska-telescope",  # Username
+    # "github_repo": "ska-low-cbf",  # Repo name
+    # "github_version": "main",  # Version
+    # "conf_py_path": "/docs/source/",  # Path in the checkout to the docs root
 }
 
 
@@ -181,8 +180,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, '{{project-name}}.tex', '{{project-name}} Documentation',
-     '{{author}}', 'manual'),
+    (
+        master_doc,
+        '{{project-name}}.tex',
+        '{{project-name}} Documentation',
+        '{{author}}',
+        'manual'
+    ),
 ]
 
 
@@ -205,9 +209,14 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, '{{project-name}}', '{{project-name}} Documentation',
-     '{{author}}', '{{project-name}}', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        '{{project-name}}',
+        '{{project-name}} Documentation',
+        '{{author}}', '{{project-name}}',
+        'One line description of project.',
+        'Miscellaneous'
+    ),
 ]
 
 
