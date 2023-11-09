@@ -28,12 +28,6 @@ include .make/docs.mk
 
 CI_JOB_ID ?= local##pipeline job id
 
-requirements: ## Install Dependencies
-#	poetry install
-#	pip list
-
-
-docs-pre-build: requirements
 
 # define private overrides for above variables in here
 -include PrivateRules.mak
@@ -43,4 +37,3 @@ PROXY_VALUES = \
 		--env=https_proxy=${https_proxy} \
 		--env=no_proxy=${no_proxy} \
 
-.PHONY: requirements

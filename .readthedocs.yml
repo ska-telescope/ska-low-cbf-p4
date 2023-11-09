@@ -20,8 +20,6 @@ build:
     # https://docs.readthedocs.io/en/stable/build-customization.html#install-dependencies-with-poetry
     post_create_environment:
       - pip install poetry
-      - pip list
       - poetry config virtualenvs.create false
     post_install:
-      # - poetry install
       - poetry install --no-root
