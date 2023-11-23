@@ -22,8 +22,9 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
-### Unreleased
+### 0.5.3
 * add switchd systemd service scripts and modify 'sde' role tasks to install it
+* latest documentation follows SKAO template
 
 ### 0.5.2
 * yaml file for SDE compatible with 9.13.0
