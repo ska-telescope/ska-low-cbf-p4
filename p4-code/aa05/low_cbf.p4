@@ -581,7 +581,9 @@ control Ingress(
         ing_src_ifid.apply();
         ing_dmac.apply();
 
-
+        if(hdr.ipv4.isValid()){
+            hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+        }
         if (ig_md.packet_type_ingress== 0){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1;
         }
