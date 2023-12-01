@@ -153,14 +153,44 @@ control IngressDeparser(
     in ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md) {
 
     Mirror() mirror;
-
+    Checksum() ipv4_csum;
 
     //pkt.emit(hdr.bridged_md);
     apply{
         if (ig_dprsr_md.mirror_type == MIRROR_TYPE_I2E) {
             mirror.emit<mirror_h>(ig_md.ing_mir_ses, {ig_md.pkt_type, ig_md.current_tstamp_telemetry, ig_md.previous_tstamp_telemetry, ig_md.total_bytes_telemetry, ig_md.frequency_no, ig_md.beam_no, ig_md.sub_array});
         }
-        pkt.emit(hdr);
+        if(hdr.ipv4.isValid()){
+            hdr.ipv4.hdr_checksum = ipv4_csum.update(
+                {
+                    hdr.ipv4.version,
+                    hdr.ipv4.ihl,
+                    hdr.ipv4.diffserv,
+                    hdr.ipv4.total_len,
+                    hdr.ipv4.identification,
+                    hdr.ipv4.flags,
+                    hdr.ipv4.frag_offset,
+                    hdr.ipv4.ttl,
+                    hdr.ipv4.protocol,
+                    hdr.ipv4.src_addr,
+                    hdr.ipv4.dst_addr
+                }
+            );
+        }
+
+        pkt.emit(hdr.bridged_md);
+        pkt.emit(hdr.ethernet);
+
+        /* ARP case */
+        pkt.emit(hdr.arp);
+        /* IPv4 case */
+        pkt.emit(hdr.ipv4);
+        pkt.emit(hdr.icmp);
+        pkt.emit(hdr.udp);
+        pkt.emit(hdr.spead);
+        pkt.emit(hdr.channel);
+        pkt.emit(hdr.station);
+        pkt.emit(hdr.psr);
 
     }
 

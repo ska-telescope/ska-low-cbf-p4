@@ -22,6 +22,9 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
+### future release
+* decrement TTL and redo IPv4 Checksum for each IPv4 packets
+
 ### 0.5.3
 * add switchd systemd service scripts and modify 'sde' role tasks to install it
 * latest documentation follows SKAO template
