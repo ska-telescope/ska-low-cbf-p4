@@ -178,7 +178,6 @@ control IngressDeparser(
             );
         }
 
-        // pkt.emit(hdr);
         pkt.emit(hdr.bridged_md);
         pkt.emit(hdr.ethernet);
 
