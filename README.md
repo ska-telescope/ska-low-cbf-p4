@@ -22,7 +22,7 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
-### future release
+### 0.5.4
 * decrement TTL and redo IPv4 Checksum for each IPv4 packets
 
 ### 0.5.3
