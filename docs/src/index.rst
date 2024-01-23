@@ -44,7 +44,11 @@ P4 code overview with a focus on various Assembly Arrays (AAs) starting with AA0
 
    SDP
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Routing Logic
 
+   routing
 
 
 Indices and tables
