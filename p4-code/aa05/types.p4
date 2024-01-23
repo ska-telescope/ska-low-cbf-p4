@@ -54,7 +54,9 @@ struct header_t {
     tcp_h tcp;
     telemetry_spead_h telemetry_spead;
     arp_resolution_h arp_resolution;
+    spead_preamble_h spead_preamble;
     spead_h spead;
+    spead_v3_h spead_v3;
     channel_info_h channel;
     station_info_h station;
     psr_h psr;

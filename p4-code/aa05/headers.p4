@@ -179,16 +179,29 @@ header icmp_h {
 }
 
 
-// CASS Headers
+// SKA - SPS
+header spead_preamble_h {
+    bit<8> magic_number;
+    bit<8> version;
+    bit<8> pointer_width;
+    bit<8> address_width;
+    bit<16> reserved;
+    bit<16> number_items;
+}
 header spead_h {
-    bit<64> spead_header;
-    //bit<64> heap_counter;
     bit<32> high_heap_counter;
     bit<32> heap_counter;
     bit<64> spead_payload_len;
     bit<64> ref_time;
     bit<64> frame_timestamp;
     bit<64> freq_channel;
+}
+
+header spead_v3_h {
+    bit<32> high_heap_counter;
+    bit<32> heap_counter;
+    bit<64> spead_payload_len;
+    bit<64> scan_id;
 }
 
 header channel_info_h {
@@ -205,6 +218,7 @@ header station_info_h {
     bit<16> num_antennas;
 }
 
+// SKA - PSR
 header psr_h {
     bit<64> sequence_number;
     bit<64> timestamp;

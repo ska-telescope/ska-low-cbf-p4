@@ -110,20 +110,26 @@ parser IngressParser(
     }
 
     state parse_spead {
-        pkt.extract(hdr.spead);
+        pkt.extract(hdr.spead_preamble);
         ig_md.packet_type_ingress  = 5;
+         transition select(hdr.spead_preamble.number_items) {
+             8 : parse_spead_v1;
+             6 : parse_spead_v3;
+             default : accept;
+         }
+    }
+    state parse_spead_v1 {
+        pkt.extract(hdr.spead);
         ig_md.losses = 0;
         ig_md.last_spead_packet = hdr.spead.heap_counter;
         transition parse_channel_info;
     }
-
-    //state parse_codif {
-    //    pkt.extract(hdr.codif);
-    //    ig_md.packet_type_ingress  = 5;
-    //    ig_md.losses = 0;
-        //ig_md.last_spead_packet = hdr.spead.heap_counter;
-    //    transition parse_channel_info;
-    //}
+    state parse_spead_v3 {
+        pkt.extract(hdr.spead_v3);
+        ig_md.losses = 0;
+        ig_md.last_spead_packet = hdr.spead_v3.heap_counter;
+        transition parse_channel_info;
+    }
 
     state parse_channel_info {
         pkt.extract(hdr.channel);

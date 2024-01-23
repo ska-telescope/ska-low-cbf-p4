@@ -32,7 +32,7 @@ In the context of AA0.5, SPS will be constituted of 6 stations. From this statio
 Computation for the various data rate can be found
 `here <https://docs.google.com/spreadsheets/d/1Qza66EnFgSQyeJwhoM_vxqVzMsNe8bHSmg6CI6Q3nSk/edit#gid=978340330>`_.
 This raw data is encapsulated in `SPEAD <https://casper.astro.berkeley.edu/astrobaki/images/9/93/SPEADsignedRelease.pdf>`_
-packets of 8264 bytes.
+packets of 8264 bytes for version 1 and 2, and 8248 bytes for version 3.
 
 Upon reception of SPEAD traffic from SPS, Low CBF P4 switch in AA0.5 will route and potentially multiply SPEAD traffic in function of the configured modus operanti of the telescope. In particular, in AA0.5, we are focusing on the following operation of the CBF:
 
@@ -49,7 +49,11 @@ In order to route the packet to alveos the P4 switch leverage information from t
 
 .. image:: diagrams/spead_headers.png
   :width: 400
-  :alt: SPEAD header
+  :alt: SPEAD header (version 1)
+
+.. image:: diagrams/sps_v3.png
+  :width: 400
+  :alt: SPEAD header (version 3)
 
 In particular, the P4 switch will route traffic using the <beam_id, frequency_id, sub_array_id> tuple to direct the correct traffic to a given Alveo. This routing consists in potential mode from the switch point of view
 
