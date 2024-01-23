@@ -40,13 +40,13 @@ control Ingress(
         inout ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md,
         inout ingress_intrinsic_metadata_for_tm_t       ig_tm_md) {
 
-    Hash<bit<16>>(HashAlgorithm_t.CRC16) crc16;
+    //Hash<bit<16>>(HashAlgorithm_t.CRC16) crc16;
 
     @name(".counter_ingress_type")
     Counter<bit<32>, bit<13>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_ingress_type;
 
-    @name(".counter_spead_losses")
-    Counter<bit<32>, bit<40>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_spead_losses;
+    //@name(".counter_spead_losses")
+    //Counter<bit<32>, bit<40>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_spead_losses;
     @name(".direct_counter")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter;
     @name(".counter_spead")
@@ -59,6 +59,7 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_2;
     @name(".counter_arp")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
+    /*
     // Register to record losses total and current sequence number in the pair
     @name(".reg_losses")
     Register<pair, bit<40>>(8192) reg_losses;
@@ -90,11 +91,12 @@ control Ingress(
                 value.uptime = value.uptime+1;
                 value.downtime = value.downtime;
             }
-            /* Update the register with the new timestamp */
+            // Update the register with the new timestamp
 
             ;
         }
     };
+    */
     /*Register<pair_test, bit<16>>(65535) last_seen_down;
     RegisterAction<pair_test, bit<16>, bit<32>>(last_seen) last_seen_action = {
         void apply(inout pair_test value, out bit<32> read_value){
@@ -113,6 +115,7 @@ control Ingress(
             value.downtime = ig_md.timestamp[31:0];
         }
     };*/
+    /*
     Register<pair_test_total, bit<16>>(65535) total_spead;
     RegisterAction<pair_test_total, bit<16>, bit<32>>(total_spead) total_spead_action = {
         void apply(inout pair_test_total value, out bit<32> read_value){
@@ -156,7 +159,7 @@ control Ingress(
 
         }
     };
-
+    */
 
 
 
@@ -336,7 +339,7 @@ control Ingress(
     action send_reply_from_sdp(PortId_t dest_port, ipv4_addr_t dst_ip_addr,
                                 ipv4_addr_t src_ip_addr) {
         hdr.ethernet.ether_type = ETHERTYPE_IPV4;
-        hdr.arp.setInvalid();
+
         hdr.ipv4.setValid();
         hdr.ipv4.src_addr = src_ip_addr;
         hdr.ipv4.dst_addr= dst_ip_addr;
@@ -354,6 +357,7 @@ control Ingress(
         hdr.arp_resolution.dst_port = ig_intr_md.ingress_port;
         hdr.arp_resolution.dst_mac_addr = hdr.arp.sha;
         hdr.arp_resolution.dst_ip_addr = hdr.arp.spa;
+        hdr.arp.setInvalid();
         direct_counter_arp.count();
         ig_tm_md.ucast_egress_port = dest_port;
 
@@ -482,7 +486,7 @@ control Ingress(
             drop;
             @defaultonly nop;
         }
-        size = SPEAD_TABLE_SIZE;
+        size = 256;
         const default_action = nop;
     }
 
@@ -505,7 +509,7 @@ control Ingress(
             swap;
             @defaultonly nop;
         }
-        size = SPEAD_TABLE_SIZE;
+        size = 256;
         const default_action = nop;
     }
 
