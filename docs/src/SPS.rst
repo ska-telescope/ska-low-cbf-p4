@@ -53,7 +53,7 @@ In order to route the packet to alveos the P4 switch leverage information from t
 
 .. image:: diagrams/sps_v3.png
   :width: 400
-  :alt: SPEAD header (version 1)
+  :alt: SPEAD header (version 3)
 
 In particular, the P4 switch will route traffic using the <beam_id, frequency_id, sub_array_id> tuple to direct the correct traffic to a given Alveo. This routing consists in potential mode from the switch point of view
 
