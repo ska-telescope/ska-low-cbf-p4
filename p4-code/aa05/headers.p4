@@ -197,7 +197,7 @@ header spead_h {
     bit<64> freq_channel;
 }
 
-header spead_v2_h {
+header spead_v3_h {
     bit<32> high_heap_counter;
     bit<32> heap_counter;
     bit<64> spead_payload_len;
