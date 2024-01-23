@@ -114,7 +114,7 @@ parser IngressParser(
         ig_md.packet_type_ingress  = 5;
          transition select(hdr.spead_preamble.number_items) {
              8 : parse_spead_v1;
-             7 : parse_spead_v2;
+             6 : parse_spead_v2;
              default : accept;
          }
     }
