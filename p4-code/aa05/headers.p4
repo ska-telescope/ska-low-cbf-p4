@@ -200,13 +200,10 @@ header spead_h {
 }
 
 header spead_v2_h {
-    //bit<64> spead_header;
     bit<32> high_heap_counter;
     bit<32> heap_counter;
     bit<64> spead_payload_len;
-    //bit<64> ref_time;
     bit<64> scan_id;
-    //bit<64> freq_channel;
 }
 
 header channel_info_h {
