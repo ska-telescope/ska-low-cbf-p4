@@ -189,8 +189,6 @@ header spead_preamble_h {
     bit<16> number_items;
 }
 header spead_h {
-    //bit<64> spead_header;
-    //bit<64> heap_counter;
     bit<32> high_heap_counter;
     bit<32> heap_counter;
     bit<64> spead_payload_len;
