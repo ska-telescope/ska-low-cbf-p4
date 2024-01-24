@@ -40,13 +40,13 @@ control Ingress(
         inout ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md,
         inout ingress_intrinsic_metadata_for_tm_t       ig_tm_md) {
 
-    //Hash<bit<16>>(HashAlgorithm_t.CRC16) crc16;
+    Hash<bit<16>>(HashAlgorithm_t.CRC16) crc16;
 
     @name(".counter_ingress_type")
     Counter<bit<32>, bit<13>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_ingress_type;
 
-    //@name(".counter_spead_losses")
-    //Counter<bit<32>, bit<40>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_spead_losses;
+    @name(".counter_spead_losses")
+    Counter<bit<32>, bit<40>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_spead_losses;
     @name(".direct_counter")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter;
     @name(".counter_spead")
@@ -59,7 +59,7 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_2;
     @name(".counter_arp")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
-    /*
+
     // Register to record losses total and current sequence number in the pair
     @name(".reg_losses")
     Register<pair, bit<40>>(8192) reg_losses;
@@ -96,7 +96,7 @@ control Ingress(
             ;
         }
     };
-    */
+
     /*Register<pair_test, bit<16>>(65535) last_seen_down;
     RegisterAction<pair_test, bit<16>, bit<32>>(last_seen) last_seen_action = {
         void apply(inout pair_test value, out bit<32> read_value){
@@ -115,7 +115,7 @@ control Ingress(
             value.downtime = ig_md.timestamp[31:0];
         }
     };*/
-    /*
+
     Register<pair_test_total, bit<16>>(65535) total_spead;
     RegisterAction<pair_test_total, bit<16>, bit<32>>(total_spead) total_spead_action = {
         void apply(inout pair_test_total value, out bit<32> read_value){
@@ -159,7 +159,7 @@ control Ingress(
 
         }
     };
-    */
+
 
 
 
@@ -215,7 +215,7 @@ control Ingress(
     @name(".set_ifid_corr")
     action set_ifid_corr(bit<32> ifid) {
         ig_md.ifid = ifid;
-        direct_counter_spead_corr.count();
+        direct_counter_spead.count();
         // Set the destination port to an invalid value
         ig_tm_md.ucast_egress_port = 9w0x1ff;
     }
@@ -403,6 +403,7 @@ control Ingress(
         }
         actions = {
             set_egr_port_freq;
+            set_ifid_corr;
             @defaultonly nop;
         }
         size = SPEAD_TABLE_SIZE;
@@ -439,11 +440,17 @@ control Ingress(
         counters = direct_counter_ipv4;
 
     }
+    /*
+    Change the destination MAC address in the packet
+    */
     @name(".change_mac_dst")
     action change_mac_dst(mac_addr_t mac_add) {
         hdr.ethernet.dst_addr = mac_add;
 
     }
+    /*
+    Table to change destination MAC address based on destionation IP address
+    */
     @name(".change_mac_dst_table")
     table change_mac_dst_table {
         key = {
@@ -455,7 +462,6 @@ control Ingress(
         }
         size = SPEAD_TABLE_SIZE;
         const default_action = nop;
-        //registers = reg_losses;
     }
 
 
@@ -529,11 +535,13 @@ control Ingress(
         }
 
         if (ig_md.packet_type_ingress == 5){
-            multiplier_spead.apply();
+            //multiplier_spead.apply();
             spead_table.apply();
             sub_station_table.apply();
             sub_station_swap_table.apply();
-            /* Removing advanced telemetry until we can have it back with latest SDE
+            /* From here we have the first advanced telemetry for SPEAD packets
+               Main issue is the need for 3 registers which
+             */
             bit<16> result;
             result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no});
             bit<32> total;
@@ -563,7 +571,7 @@ control Ingress(
             if (ig_md.last_spead_packet != ig_md.losses ){
                 counter_spead_losses.count(hdr.channel.frequency_no++hdr.channel.beam_no++hdr.station.sub_array);
             }
-            */
+
 
         }
         if (ig_md.packet_type_ingress == 4){
@@ -587,6 +595,7 @@ control Ingress(
 
         if(hdr.ipv4.isValid()){
             hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+            //
         }
         if (ig_md.packet_type_ingress== 0){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1;
