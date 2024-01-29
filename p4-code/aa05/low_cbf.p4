@@ -623,12 +623,12 @@ control Egress(
 
     @name(".set_telemetry_header")
     action set_telemetry_header(ipv4_addr_t src_addr, ipv4_addr_t dst_addr, mac_addr_t hw_src_addr, mac_addr_t hw_dst_addr) {
-        hdr.ipv4.total_len = 118;
+        hdr.ipv4.total_len = 113;
         hdr.ethernet.dst_addr = hw_dst_addr;
         hdr.ethernet.src_addr = hw_src_addr;
         hdr.ipv4.dst_addr = dst_addr;
         hdr.ipv4.src_addr = src_addr;
-        hdr.udp.hdr_length = 98;
+        hdr.udp.hdr_length = 93;
         hdr.udp.checksum = 0;
         hdr.telemetry_spead.setValid();
         hdr.telemetry_spead.frequency_no = eg_md.frequency_no;
