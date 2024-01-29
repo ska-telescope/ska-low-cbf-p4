@@ -51,8 +51,8 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter;
     @name(".counter_spead")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead;
-    //@name(".counter_spead_corr")
-    //DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead_corr;
+    @name(".counter_spead_corr")
+    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead_corr;
     @name(".direct_counter_ipv4")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_ipv4;
     @name(".counter")
