@@ -193,10 +193,13 @@ control IngressDeparser(
         pkt.emit(hdr.ipv4);
         pkt.emit(hdr.icmp);
         pkt.emit(hdr.udp);
+        pkt.emit(hdr.spead_preamble);
+        pkt.emit(hdr.spead_v3);
         pkt.emit(hdr.spead);
         pkt.emit(hdr.channel);
         pkt.emit(hdr.station);
         pkt.emit(hdr.psr);
+        pkt.emit(hdr.arp_resolution);
 
     }
 
