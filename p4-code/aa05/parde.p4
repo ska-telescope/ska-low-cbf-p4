@@ -199,6 +199,7 @@ control IngressDeparser(
         pkt.emit(hdr.channel);
         pkt.emit(hdr.station);
         pkt.emit(hdr.psr);
+        pkt.emit(hdr.arp_resolution);
 
     }
 
