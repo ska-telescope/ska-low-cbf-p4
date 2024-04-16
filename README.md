@@ -22,6 +22,11 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
+### 0.5.5
+* New organisation of the code to re-install advanced telemetry
+* compatibility with SPS version 3
+* fix bug in ARP resolution
+
 ### 0.5.4
 * decrement TTL and redo IPv4 Checksum for each IPv4 packets
 
