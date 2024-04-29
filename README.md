@@ -22,7 +22,7 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
-### Not released yet
+### 0.5.6
 * fixing flags in IPv4 for the ARP resolution
 
 ### 0.5.5
