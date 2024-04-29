@@ -346,6 +346,8 @@ control Ingress(
         hdr.ipv4.total_len = 58;
         hdr.ipv4.ihl = 5;
         hdr.ipv4.version = 4;
+        hdr.ipv4.flags = 2;
+        hdr.ipv4.frag_offset = 0;
 //        hdr.ipv4.ttl = 64;
 //        hdr.ipv4.diffserv = 0;
 //        hdr.ipv4.identification = 1;
