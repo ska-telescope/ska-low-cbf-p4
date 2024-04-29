@@ -346,6 +346,8 @@ control Ingress(
         hdr.ipv4.total_len = 58;
         hdr.ipv4.ihl = 5;
         hdr.ipv4.version = 4;
+        hdr.ipv4.flags = 2;
+        hdr.ipv4.frag_offset = 0;
 //        hdr.ipv4.ttl = 64;
 //        hdr.ipv4.diffserv = 0;
 //        hdr.ipv4.identification = 1;
@@ -682,7 +684,7 @@ Pipeline(
 ) pipe;
 
 // instantiate the package Switch with a single pipeline
-@pkginfo(name="low_cbf", version="0.5.5")
+@pkginfo(name="low_cbf", version="0.5.6")
 @pkginfo(organization="CSIRO")
 @pkginfo(contact="guillaume.jourjon@csiro.au")
 @brief("Low CBF P4 rules for AA0.5")
