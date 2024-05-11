@@ -40,7 +40,7 @@ control Ingress(
         inout ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md,
         inout ingress_intrinsic_metadata_for_tm_t       ig_tm_md) {
 
-    //Hash<bit<16>>(HashAlgorithm_t.CRC16) crc16;
+    Hash<bit<16>>(HashAlgorithm_t.CRC16) crc16;
 
     @name(".counter_ingress_type")
     Counter<bit<32>, bit<13>>(8192, CounterType_t.PACKETS_AND_BYTES) counter_ingress_type;
@@ -51,8 +51,8 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter;
     @name(".counter_spead")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead;
-    @name(".counter_spead_corr")
-    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead_corr;
+    //@name(".counter_spead_corr")
+    //DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_spead_corr;
     @name(".direct_counter_ipv4")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_ipv4;
     @name(".counter")
@@ -73,8 +73,8 @@ control Ingress(
             value.current = ig_md.last_spead_packet + 1;
         }
     };
-    Register<pair_test, bit<40>>(20000) last_seen;
-    RegisterAction<pair_test, bit<40>, bit<32>>(last_seen) last_seen_action = {
+    Register<pair_test, bit<16>>(32767) last_seen;
+    RegisterAction<pair_test, bit<16>, bit<32>>(last_seen) last_seen_action = {
         void apply(inout pair_test value, out bit<32> read_value){
 
 
@@ -116,8 +116,8 @@ control Ingress(
         }
     };*/
 
-    Register<pair_test_total, bit<40>>(20000) total_spead;
-    RegisterAction<pair_test_total, bit<40>, bit<32>>(total_spead) total_spead_action = {
+    Register<pair_test_total, bit<16>>(32767) total_spead;
+    RegisterAction<pair_test_total, bit<16>, bit<32>>(total_spead) total_spead_action = {
         void apply(inout pair_test_total value, out bit<32> read_value){
 
             read_value = value.packet;
@@ -138,8 +138,8 @@ control Ingress(
 
         }
     };
-    Register<pair_test_total, bit<40>>(20000) total_spead_bytes;
-    RegisterAction<pair_test_total, bit<40>, bit<32>>(total_spead_bytes) total_spead_action_bytes = {
+    Register<pair_test_total, bit<16>>(32767) total_spead_bytes;
+    RegisterAction<pair_test_total, bit<16>, bit<32>>(total_spead_bytes) total_spead_action_bytes = {
         void apply(inout pair_test_total value, out bit<32> read_value){
             read_value = value.byte;
             bit<16> tmp;
@@ -220,6 +220,7 @@ control Ingress(
         ig_tm_md.ucast_egress_port = 9w0x1ff;
     }
 
+    /*
     @name(".multiplier_spead")
     table  multiplier_spead {
         key = {
@@ -237,12 +238,13 @@ control Ingress(
         const default_action = nop;
         counters = direct_counter_spead_corr;
     }
-
+    */
     @name(".set_egr_port_beam")
     action set_egr_port_beam(PortId_t dest_port) {
         direct_counter_2.count();
         ig_tm_md.ucast_egress_port = dest_port;
     }
+
 
     @name(".psr_table")
     table psr_table {
@@ -545,18 +547,18 @@ control Ingress(
                Main issue is the need for 3 registers which
              */
             bit<16> result;
-            //result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no});
+            result = crc16.get({hdr.channel.frequency_no, hdr.station.sub_array, hdr.channel.beam_no}) >> 1;
             bit<32> total;
             bit<16> tmp;
             bit<32> tmp2;
             bit<32> last_time;
             tmp = 0;
             tmp2 = tmp++hdr.ipv4.total_len;
-            last_time = last_seen_action.execute(hdr.channel.frequency_no++hdr.channel.beam_no++hdr.station.sub_array);
+            last_time = last_seen_action.execute(result);
 
             // + hdr.ipv4.total_len;
-            total = total_spead_action.execute(hdr.channel.frequency_no++hdr.channel.beam_no++hdr.station.sub_array);
-            ig_md.total_bytes_telemetry = total_spead_action_bytes.execute(hdr.channel.frequency_no++hdr.channel.beam_no++hdr.station.sub_array)+tmp2;
+            total = total_spead_action.execute(result);
+            ig_md.total_bytes_telemetry = total_spead_action_bytes.execute(result)+tmp2;
 
             if (total == 99){
                 //
