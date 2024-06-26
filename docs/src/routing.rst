@@ -62,7 +62,9 @@ Flowchart
         Arrive[Packet Arrives] --> Extract(Extract Headers)
         Extract --> Multi{Multicast Table?}
         Multi -- Yes --> ApplyMulti(Apply Multicast rule)
-        Multi -- No --> IP{IPv4?}
+        Multi -- No --> Basic{Basic Table?}
+        Basic -- Yes --> ApplyBasicRule(Apply Basic rule)
+        Basic -- No --> IP{IPv4?}
         IP -- Yes --> TTL(Decrement TTL)
         subgraph IP Based Protocols
             TTL --> IP_FORWARD{IP DEST Match}
@@ -74,13 +76,11 @@ Flowchart
         subgraph "Non-IP Protocols"
             ARP -- No --> PTP{PTP?}
         end
-        PTP -- No --> Basic
+        PTP -- No --> Discard
         ARP -- Yes --> ApplyARD(Apply ARP rule)
         PTP -- Yes --> ApplyPTP(Apply PTP rule)
         IP_FORWARD -- Yes --> ApplyIPForward(Apply IP Forward rule)
         PSR -- Yes --> ApplyPSR(Apply PSR rule)
         SPS_M -- Yes --> ApplySPSM(Apply SPS Multicast rule)
         SPS_U -- Yes --> ApplySPSU(Apply SPS Unicast rule)
-        SPS_U -- No --> Basic{Basic Table?}
-        Basic -- Yes --> ApplyBasicRule(Apply Basic rule)
-        Basic -- No --> Discard
+        SPS_U -- No --> Discard
