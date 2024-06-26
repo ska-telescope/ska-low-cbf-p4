@@ -528,7 +528,6 @@ control Ingress(
     apply {
         //<bit 13> = <bit4> ++ <bit9>
         counter_ingress_type.count(ig_md.packet_type_ingress++ig_intr_md.ingress_port);
-        ing_port_table.apply();//generic table
 
         //setting the scene for multicast
 
@@ -601,6 +600,7 @@ control Ingress(
             hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
             //
         }
+        ing_port_table.apply();//generic table
         if (ig_md.packet_type_ingress== 0){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1;
         }
