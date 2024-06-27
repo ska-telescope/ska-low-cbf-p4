@@ -22,6 +22,10 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
+*** not released yet
+* telemetry with hash reintroduced to identify flow
+* basic route taking precedence on other rules
+
 ### 0.5.6
 * fixing flags in IPv4 for the ARP resolution
 
