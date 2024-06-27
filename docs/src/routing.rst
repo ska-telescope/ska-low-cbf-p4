@@ -31,8 +31,6 @@ General Logic
 
 On arrival switch attempt to extract all relevant headers. Then try to match each table in sequence:
 
-#. Try to match Basic Table
-
 #. If protocol P present then:
 
     * If P = SPS Spead, match spead multicast then unicast
@@ -41,6 +39,8 @@ On arrival switch attempt to extract all relevant headers. Then try to match eac
     * If P = PTP, match “PTP routing from Clock” then “PTP routing to Clock”
     * If P = ARP, match ARP table
     * If P = IPv4, perform TTL = TTL-1
+
+#. Try to match Basic Table
 
 #. Try to apply Multicast Table
 
