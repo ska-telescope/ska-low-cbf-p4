@@ -240,9 +240,10 @@ control Ingress(
     }
     */
     @name(".set_egr_port_beam")
-    action set_egr_port_beam(PortId_t dest_port) {
+    action set_egr_port_beam(PortId_t dest_port, bit<16> destination_udp_port) {
         direct_counter_2.count();
         ig_tm_md.ucast_egress_port = dest_port;
+        hdr.udp.dst_port = destination_udp_port;
     }
 
 
