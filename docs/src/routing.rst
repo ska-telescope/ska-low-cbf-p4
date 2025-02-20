@@ -9,7 +9,8 @@ List of Tables
 +========================+===============================+===========================================+
 | BasicTable             | Incoming Port                 | Send to destination Port p                |
 +------------------------+-------------------------------+-------------------------------------------+
-| PSR routing            | PSR Beam number               | Send to destination Port p                |
+| PSR routing            | PSR Beam number               | Send to destination Port p  and           |
+|                        |                               | Change UDP destionation port              |
 +------------------------+-------------------------------+-------------------------------------------+
 | Multicast SPEAD        | Triple <freq, subarray, beam> | Send to multicast group                   |
 +------------------------+-------------------------------+-------------------------------------------+
