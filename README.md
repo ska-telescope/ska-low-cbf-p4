@@ -22,7 +22,7 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
-*** not released yet
+### 0.6.0
 * PSR routing now requires UDP destination port number
 * telemetry with hash reintroduced to identify flow
 * basic route taking precedence on other rules
