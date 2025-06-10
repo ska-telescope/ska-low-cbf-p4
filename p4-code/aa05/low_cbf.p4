@@ -250,7 +250,7 @@ control Ingress(
     @name(".psr_table")
     table psr_table {
         key = {
-            hdr.ipv4.dst_addr : exact @name("psr_ip");
+            hdr.psr.beam_number: exact @name("beam_number");
         }
         actions = {
             set_egr_port_beam;
@@ -535,8 +535,9 @@ control Ingress(
 
 
         if (ig_md.packet_type_ingress == 6){
-            change_mac_dst_table.apply();
             psr_table.apply();
+            change_mac_dst_table.apply();
+            forward_ip_table.apply();
         }
 
         if (ig_md.packet_type_ingress == 5){
