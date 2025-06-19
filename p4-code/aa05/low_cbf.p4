@@ -578,7 +578,7 @@ control Ingress(
 
 
         }
-        if (ig_md.packet_type_ingress == 4){
+        if (ig_md.packet_type_ingress == 4 || ig_md.packet_type_ingress == 6){
             change_mac_dst_table.apply();
             forward_ip_table.apply();
 
