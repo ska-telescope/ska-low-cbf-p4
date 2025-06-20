@@ -22,11 +22,11 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
-### Not yet releases
+### 1.0.0
 * PSR routing now done also using IP address
 
 ### 0.6.0
-* PSR routing now requires UDP destination port number
+* PSR beam routing now requires UDP destination port number
 * telemetry with hash reintroduced to identify flow
 * basic route taking precedence on other rules
 
