@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "ska-low-cbf-p4"
-version = "0.6.0"
-description = "P4 controller independent code"
-authors = ["Your Name <you@example.com>"]
+version = "1.0.0"
+description = "P4 switch code"
+authors = ["Guillaume Jourjon"]
 license = "CSIRO Open Source Software License"
 
 [tool.poetry.dependencies]
