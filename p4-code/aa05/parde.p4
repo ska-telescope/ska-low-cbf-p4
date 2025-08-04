@@ -54,7 +54,17 @@ parser IngressParser(
             ETHERTYPE_IPV4 : parse_ipv4;
             ETHERTYPE_ARP  : parse_arp;
             ETHERTYPE_PTP : parse_ptp;
-            // ETHERTYPE_IPV6 : accept;
+            ETHERTYPE_VLAN : parse_vlan;
+            default : parse_unknown;
+        }
+    }
+
+    state parse_vlan {
+        pkt.extract(hdr.vlan_tag);
+        transition select(hdr.vlan_tag.ether_type) {
+            ETHERTYPE_IPV4 : parse_ipv4;
+            ETHERTYPE_ARP  : parse_arp;
+            ETHERTYPE_PTP : parse_ptp;
             default : parse_unknown;
         }
     }
@@ -186,7 +196,7 @@ control IngressDeparser(
 
         pkt.emit(hdr.bridged_md);
         pkt.emit(hdr.ethernet);
-
+        pkt.emit(hdr.vlan_tag);
         /* ARP case */
         pkt.emit(hdr.arp);
         /* IPv4 case */
@@ -283,6 +293,17 @@ parser EgressParser(
     state parse_ethernet {
         pkt.extract(hdr.ethernet);
         transition select(hdr.ethernet.ether_type) {
+            ETHERTYPE_IPV4 : parse_ipv4;
+            ETHERTYPE_ARP  : parse_arp;
+            ETHERTYPE_PTP : parse_ptp;
+            ETHERTYPE_VLAN : parse_vlan;
+            default : parse_unknown;
+        }
+    }
+
+    state parse_vlan {
+        pkt.extract(hdr.vlan_tag);
+        transition select(hdr.vlan_tag.ether_type) {
             ETHERTYPE_IPV4 : parse_ipv4;
             ETHERTYPE_ARP  : parse_arp;
             ETHERTYPE_PTP : parse_ptp;
