@@ -44,7 +44,7 @@ struct egress_metadata_t {
 struct header_t {
     mirror_bridged_metadata_h bridged_md;
     ethernet_h ethernet;
-    vlan_tag_h[VLAN_DEPTH] vlan_tag;
+    vlan_tag_h vlan_tag;
     ipv4_h ipv4;
     ipv4_option_h ipv4_option;
     ipv6_h ipv6;
