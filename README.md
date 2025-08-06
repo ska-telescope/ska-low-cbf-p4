@@ -22,6 +22,9 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
+### not in release yet
+* VLAN tag can be used
+
 ### 1.0.0
 * PSR routing now done also using IP address
 

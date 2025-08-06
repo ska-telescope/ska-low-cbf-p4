@@ -11,8 +11,14 @@ python = "~3.10"
 [[tool.poetry.source]]
 name = 'ska-low-cbf-p4'
 url = 'https://artefact.skao.int/repository/pypi-internal/simple'
-secondary = true
 
+[[tool.poetry.source]]
+name = "pypi-public"
+url = "https://pypi.org/simple/"
+
+[[tool.poetry.source]]
+name = "ska-nexus"
+url = "https://artefact.skao.int/repository/pypi-internal/simple"
 
 [tool.poetry.group.docs.dependencies]
 Sphinx = "^6.2.1"
