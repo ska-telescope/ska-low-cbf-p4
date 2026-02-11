@@ -65,14 +65,12 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
 
     const bit<16> bool_register_table_size = 512;
-    Register<pair_tag, bit<9>>(bool_register_table_size, 1) bool_register_table;
+    Register<bit<1>, bit<9>>(bool_register_table_size, 1) bool_register_table;
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
-    RegisterAction<pair_tag, bit<9>, bit<2>>(bool_register_table) bool_register_table_action = {
-        void apply(inout pair value, out bit<2> read_value) {
-            if (pair.action == 1){ // update
-            rv = val;
-            }
+    RegisterAction<bit<1>, bit<9>, bit<1>>(bool_register_table) bool_register_table_action = {
+        void apply(inout bit<1> value, out bit<1> read_value) {
+            rv = value.current;
         }
     };
 
@@ -507,7 +505,7 @@ control Ingress(
     action update_register(bit<1> dropping_or_not) {
         bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
         bit<1> reg_value = dropping_or_not;      // Value: 1-bit flag
-        my_register.write(reg_key, reg_value);   // Write to register
+        bool_register_table_action.execute();   // Write to register
     }
 
     @name(".check_scan_id")
@@ -601,7 +599,7 @@ control Ingress(
         ing_port_table.apply();//generic table
         bit<1> reg_value;
         bit<9> reg_key=ig_intr_md.ingress_port;
-        my_register.read(reg_key, reg_value);
+        reg_value
         if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1; // Drop packet
         }
