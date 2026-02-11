@@ -28,10 +28,7 @@ struct pair_test_total {
 
 }
 
-extern register<bit<1>, bit<9>> {
-    Register<bit<1>, bit<9>>(512) my_register;
-}
-
+Register<bit<9>, bit<1>>(512) my_register;
 
 // ---------------------------------------------------------------------------
 // Ingress control block
@@ -493,9 +490,9 @@ control Ingress(
 
     @name(".update_register")
     action update_register(bit<1> dropping_or_not) {
-        bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port
-        bit<1> reg_value = dropping_or_not;              // Value: 1 (drop flag)
-        my_register.write(0, reg_key, reg_value); // Write to register
+        bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
+        bit<1> reg_value = dropping_or_not;      // Value: 1-bit flag
+        my_register.write(reg_key, reg_value);   // Write to register
     }
 
     @name(".check_scan_id")
@@ -565,7 +562,7 @@ control Ingress(
         if (ig_md.packet_type_ingress == 4 || ig_md.packet_type_ingress == 6){
             change_mac_dst_table.apply();
             forward_ip_table.apply();
-            check_scan_id.apply()
+            check_scan_id.apply();
 
         }
 
@@ -588,9 +585,9 @@ control Ingress(
         }
         ing_port_table.apply();//generic table
         bit<1> reg_value;
-        my_register.read(0, ig_intr_md.ingress_port, reg_value);
+        my_register.read(ig_intr_md.ingress_port, reg_value);
         if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
-            ig_dprsr_md.drop_ctl = 0x1;
+            ig_dprsr_md.drop_ctl = 0x1; // Drop packet
         }
 
 
