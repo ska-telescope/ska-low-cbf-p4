@@ -585,7 +585,8 @@ control Ingress(
         }
         ing_port_table.apply();//generic table
         bit<1> reg_value;
-        my_register.read(ig_intr_md.ingress_port, reg_value);
+        bit<9> reg_key=ig_intr_md.ingress_port;
+        my_register.read(reg_key, reg_value);
         if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1; // Drop packet
         }
