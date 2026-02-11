@@ -101,31 +101,9 @@ control Ingress(
 
                 value.uptime = value.uptime+1;
                 value.downtime = value.downtime;
-            }
-            // Update the register with the new timestamp
-
-            ;
+            };
         }
     };
-
-    /*Register<pair_test, bit<16>>(65535) last_seen_down;
-    RegisterAction<pair_test, bit<16>, bit<32>>(last_seen) last_seen_action = {
-        void apply(inout pair_test value, out bit<32> read_value){
-
-
-            bit<16> tmp;
-            tmp = 0;
-            bit<32> down;
-            bit<32> up;
-            down = value.downtime;
-            up = value.uptime;
-            read_value = down ++ up;
-
-            /* Update the register with the new timestamp */
-    /*        value.uptime = tmp++ig_md.timestamp[47:32];
-            value.downtime = ig_md.timestamp[31:0];
-        }
-    };*/
 
     Register<pair_test_total, bit<16>>(32767) total_spead;
     RegisterAction<pair_test_total, bit<16>, bit<32>>(total_spead) total_spead_action = {
@@ -504,11 +482,11 @@ control Ingress(
         bit<1> reg_value = dropping_or_not;      // Value: 1-bit flag
         bit<1> dummy_read_value;
         //bool_register_table.write(reg_key, reg_value);   // Write to register
-        bool_register_table.execute(reg_key);
+        bool_register_table_action.execute(reg_key, reg_value, dummy_read_value);
     }
     action check_register(bit<9> reg_key, out bit<1> read_value) {
         bit<1> current_value = 0; // Initialize to a dummy value
-        bool_register_table.execute(reg_key);
+        bool_register_table_action.execute(reg_key, current_value, read_value);
     }
 
     @name(".check_scan_id")
