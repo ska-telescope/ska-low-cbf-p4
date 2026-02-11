@@ -484,10 +484,8 @@ control Ingress(
         //bool_register_table.write(reg_key, reg_value);   // Write to register
         bool_register_table_action.execute(reg_key, reg_value, dummy_read_value);
     }
-    action check_register(bit<9> reg_key, out bit<1> read_value) {
-        bit<1> current_value = 0; // Initialize to a dummy value
-        bool_register_table_action.execute(reg_key, current_value, read_value);
-    }
+
+
 
     @name(".check_scan_id")
     table check_scan_id {
@@ -579,8 +577,10 @@ control Ingress(
         }
         ing_port_table.apply();//generic table
         bit<1> reg_value;
+        bit<1> current_value = 0;
         bit<9> reg_key=ig_intr_md.ingress_port;
-        check_register(reg_key, reg_value);
+
+        bool_register_table_action.execute(reg_key, current_value, reg_value);
         if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1; // Drop packet
         }
