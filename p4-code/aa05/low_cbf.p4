@@ -66,10 +66,10 @@ control Ingress(
     // stored in the register table.
     @name("bool_register_table_action")
     RegisterAction<bit<1>, bit<9>, bit<1>> bool_register_table_action = {
-        (inout bit<1> value, out bit<1> read_value) {
+        void apply(inout bit<1> value, out bit<1> read_value) {
             read_value = value; // Return the current value
         }
-    }(bool_register_table);
+    };
 
     // Register to record losses total and current sequence number in the pair
     @name(".reg_losses")
