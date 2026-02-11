@@ -115,8 +115,12 @@ parser IngressParser(
 
     }
     state parse_other{
+        pkt.extract(hdr.spead_preamble);
         ig_md.packet_type_ingress  = 4;
-        transition accept;
+        transition select(hdr.spead_preamble.magic_number) {
+             0x53 : parse_spead_sdp;
+             default : accept;
+         }
     }
 
     state parse_spead {
@@ -148,6 +152,18 @@ parser IngressParser(
 
     state parse_station_info {
         pkt.extract(hdr.station);
+        transition accept;
+    }
+
+    state parse_spead_sdp{
+        transition select(hdr.spead_preamble.number_items) {
+             7 : parse_spead_sdp_data;
+             default : accept;
+        }
+
+    }
+    state parse_spead_sdp_data{
+        pkt.extract(hdr.spead_data);
         transition accept;
     }
 

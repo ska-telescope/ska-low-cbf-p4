@@ -204,6 +204,18 @@ header spead_v3_h {
     bit<64> scan_id;
 }
 
+header spead_data_h {
+    bit<64> heap_counter;
+    bit<64> heap_size;
+    bit<64> heap_offset;
+    bit<64> payload_length;
+    bit<64> epoch_offset;
+    bit<64> scan_pointer;
+    bit<64> vis_flag;
+    bit<64> correlator_data_pointer;
+    bit<64> scan_id;
+}
+
 header channel_info_h {
     bit<32> pad;
     bit<16> beam_no;

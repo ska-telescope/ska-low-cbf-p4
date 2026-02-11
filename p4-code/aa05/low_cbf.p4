@@ -28,6 +28,10 @@ struct pair_test_total {
 
 }
 
+extern register<bit<1>, bit<9>> {
+    Register<bit<1>, bit<9>>(512) my_register;
+}
+
 
 // ---------------------------------------------------------------------------
 // Ingress control block
@@ -486,44 +490,26 @@ control Ingress(
 
     }
 
-    // Table used only during commissioning to test what happen when we emulate the disconnection of
-    // an entire sub_station
-    @name(".sub_station_table")
-    table sub_station_table {
+
+    @name(".update_register")
+    action update_register(bit<1> dropping_or_not) {
+        bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port
+        bit<1> reg_value = dropping_or_not;              // Value: 1 (drop flag)
+        my_register.write(0, reg_key, reg_value); // Write to register
+    }
+
+    @name(".check_scan_id")
+    table check_scan_id {
         key = {
-            hdr.station.sub_station: exact @name("sub_station");
+            hdr.spead_data.scan_id: exact;
         }
         actions = {
-            drop;
+            update_register;
             @defaultonly nop;
         }
         size = 256;
         const default_action = nop;
     }
-
-    // Table used only during commissioning to test what happen when we emulate the disconnection of
-    // an entire sub_station
-    @name(".swap")
-    action swap(bit<8> new_sub_station, bit<16> new_station) {
-        hdr.station.sub_station = new_sub_station;
-        hdr.station.station_no = new_station;
-
-
-    }
-
-    @name(".sub_station_swap_table")
-    table sub_station_swap_table {
-        key = {
-            hdr.station.sub_station: exact @name("sub_station");
-        }
-        actions = {
-            swap;
-            @defaultonly nop;
-        }
-        size = 256;
-        const default_action = nop;
-    }
-
 
 
     apply {
@@ -541,8 +527,6 @@ control Ingress(
         if (ig_md.packet_type_ingress == 5){
             //multiplier_spead.apply();
             spead_table.apply();
-            sub_station_table.apply();
-            sub_station_swap_table.apply();
             /* From here we have the first advanced telemetry for SPEAD packets
                Main issue is the need for 3 registers which
              */
@@ -602,7 +586,9 @@ control Ingress(
             //
         }
         ing_port_table.apply();//generic table
-        if (ig_md.packet_type_ingress== 0){ //packet unknown but
+        bit<1> reg_value;
+        my_register.read(0, ig_intr_md.ingress_port, reg_value);
+        if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1;
         }
 
