@@ -64,13 +64,13 @@ control Ingress(
     Register<bit<1>, bit<9>>(bool_register_table_size) bool_register_table;
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
-    @name("bool_register_table_action")
-    RegisterAction<bit<9>, bit<1>, bit<1>>(bool_register_table) bool_register_table_action = {
+    RegisterAction<bit<9>, bit<1>, bit<1>> bool_register_table_action = {
+        @name("bool_register_table_action")
         void apply(inout bit<1> value, out bit<1> read_value) {
             read_value = value; // Return the current value
-            // You can modify 'value' here to update the register
+            // Modify 'value' here if you want to update the register
         }
-    };
+    }(bool_register_table);
 
     // Register to record losses total and current sequence number in the pair
     @name(".reg_losses")
