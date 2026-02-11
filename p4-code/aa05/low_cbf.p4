@@ -28,7 +28,10 @@ struct pair_test_total {
 
 }
 
-Register<bit<9>, bit<1>>(512) my_register;
+struct pair_tag{
+    bit<1>     current;
+    bit<1>     action;
+}
 
 // ---------------------------------------------------------------------------
 // Ingress control block
@@ -60,6 +63,18 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_2;
     @name(".counter_arp")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
+
+    const bit<16> bool_register_table_size = 512;
+    Register<pair_tag, bit<9>>(bool_register_table_size, 1) bool_register_table;
+    // A simple one-bit register action that returns the inverse of the value
+    // stored in the register table.
+    RegisterAction<pair_tag, bit<9>, bit<2>>(bool_register_table) bool_register_table_action = {
+        void apply(inout pair value, out bit<2> read_value) {
+            if (pair.action == 1){ // update
+            rv = val;
+            }
+        }
+    };
 
     // Register to record losses total and current sequence number in the pair
     @name(".reg_losses")
