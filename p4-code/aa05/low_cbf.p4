@@ -28,10 +28,6 @@ struct pair_test_total {
 
 }
 
-struct pair_tag{
-    bit<1>     current;
-    bit<1>     action;
-}
 
 // ---------------------------------------------------------------------------
 // Ingress control block
