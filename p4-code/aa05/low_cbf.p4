@@ -65,7 +65,7 @@ control Ingress(
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
     @name("bool_register_table_action")
-    RegisterAction<bit<1>, bit<9>, bit<1>> bool_register_table_action = {
+    RegisterAction<bit<1>, bit<9>, bit<1>>(bool_register_table) bool_register_table_action = {
         void apply(inout bit<1> value, out bit<1> read_value) {
             read_value = value; // Return the current value
         }
