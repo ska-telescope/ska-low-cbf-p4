@@ -65,8 +65,8 @@ control Ingress(
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
     @name("bool_register_table_action")
-    RegisterAction<bit<1>, bit<9>, bit<1>>(bool_register_table) bool_register_table_action = {
-        void apply(inout bit<1> value, out bit<1> read_value) {
+    RegisterAction<bit<16>, bit<9>, bit<16>>(bool_register_table) bool_register_table_action = {
+        void apply(inout bit<16> value, out bit<16> read_value) {
             read_value = value; // Return the current value
         }
     };
@@ -477,10 +477,10 @@ control Ingress(
 
 
     @name(".update_register")
-    action update_register(bit<1> dropping_or_not) {
+    action update_register(bit<16> dropping_or_not) {
         bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
-        bit<1> reg_value = dropping_or_not;      // Value: 1-bit flag
-        bit<1> dummy_read_value;
+        bit<16> reg_value = dropping_or_not;      // Value: 1-bit flag
+        bit<16> dummy_read_value;
         //bool_register_table.write(reg_key, reg_value);   // Write to register
         bool_register_table_action.execute(reg_key, reg_value, dummy_read_value);
     }
@@ -576,8 +576,8 @@ control Ingress(
             //
         }
         ing_port_table.apply();//generic table
-        bit<1> reg_value;
-        bit<1> current_value = 0;
+        bit<16> reg_value;
+        bit<16> current_value = 0;
         bit<9> reg_key=ig_intr_md.ingress_port;
 
         bool_register_table_action.execute(reg_key, current_value, reg_value);
