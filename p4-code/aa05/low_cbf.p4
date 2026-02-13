@@ -485,6 +485,7 @@ control Ingress(
         bit<16> dummy_read_value;
         //bool_register_table.write(reg_key, reg_value);   // Write to register
         bool_register_table_action.execute(reg_key, reg_value, dummy_read_value);
+        direct_counter_scan.count();
     }
 
 
