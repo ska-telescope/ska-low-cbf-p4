@@ -61,7 +61,7 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
 
     const bit<32> bool_register_table_size = 512;
-    Register<bit<1>, bit<9>>(bool_register_table_size) bool_register_table;
+    Register<bit<16>, bit<9>>(bool_register_table_size) bool_register_table;
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
     @name("bool_register_table_action")
