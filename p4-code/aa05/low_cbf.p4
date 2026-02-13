@@ -59,6 +59,8 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_2;
     @name(".counter_arp")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
+    @name(".counter_scan")
+    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_scan;
 
     const bit<32> bool_register_table_size = 512;
     Register<bit<16>, bit<9>>(bool_register_table_size) bool_register_table;
@@ -498,6 +500,7 @@ control Ingress(
         }
         size = 256;
         const default_action = nop;
+        counters = direct_counter_scan;
     }
 
 
