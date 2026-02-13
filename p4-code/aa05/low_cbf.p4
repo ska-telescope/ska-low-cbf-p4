@@ -490,7 +490,7 @@ control Ingress(
     @name(".check_scan_id")
     table check_scan_id {
         key = {
-            hdr.spead_data.scan_id: exact;
+            hdr.spead_data.scan_id: exact @name("scan_id");
         }
         actions = {
             update_register;
