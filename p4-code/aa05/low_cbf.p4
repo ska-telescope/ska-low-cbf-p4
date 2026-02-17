@@ -483,7 +483,6 @@ control Ingress(
         bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
         bit<16> reg_value = dropping_or_not;      // Value: 1-bit flag
         bit<16> dummy_read_value;
-        //bool_register_table.write(reg_key, reg_value);   // Write to register
         bool_register_table_action.execute(reg_key, reg_value, dummy_read_value);
         direct_counter_scan.count();
     }
