@@ -213,7 +213,7 @@ header spead_data_h {
     bit<64> scan_pointer;
     bit<64> vis_flag;
     bit<64> correlator_data_pointer;
-    bit<64> epoch_offset
+    bit<64> epoch_offset;
     bit<64> scan_id;
 }
 
