@@ -222,6 +222,7 @@ control IngressDeparser(
         pkt.emit(hdr.spead_preamble);
         pkt.emit(hdr.spead_v3);
         pkt.emit(hdr.spead);
+        pkt.emit(hdr.spead_data);
         pkt.emit(hdr.channel);
         pkt.emit(hdr.station);
         pkt.emit(hdr.psr);
