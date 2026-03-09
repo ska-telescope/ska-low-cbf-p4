@@ -68,7 +68,7 @@ control Ingress(
     // stored in the register table.
     @name("bool_register_table_action")
     RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_table_action = {
-        void apply(inout bit<9> value, out bit<9> read_value) {
+        void apply(inout bit<8> value, out bit<8> read_value) {
             read_value = value; // Return the current value
         }
     };
