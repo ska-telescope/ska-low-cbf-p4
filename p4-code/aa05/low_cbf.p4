@@ -483,9 +483,9 @@ control Ingress(
     action update_register(bit<8> dropping_or_not) {
         bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
         bit<8> dummy_read_value;                 // Dummy variable for read output
-        
+        bit<8> value = dropping_or_not;
         // Write the dropping_or_not value to the register
-        bool_register_table_action.execute(reg_key, dropping_or_not, dummy_read_value);
+        bool_register_table_action.execute(reg_key, value, dummy_read_value);
         direct_counter_scan.count();
     }
 
