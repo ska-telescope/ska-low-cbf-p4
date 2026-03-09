@@ -585,8 +585,8 @@ control Ingress(
             //
         }
         ing_port_table.apply();//generic table
-        bit<16> reg_value;
-        bit<16> current_value = 0;
+        bit<9> reg_value;
+        bit<9> current_value = 0;
         bit<9> reg_key=ig_intr_md.ingress_port;
 
         bool_register_table_action.execute(reg_key, current_value, reg_value);
