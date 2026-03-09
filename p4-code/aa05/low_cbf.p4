@@ -63,12 +63,12 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_scan;
 
     const bit<32> bool_register_table_size = 512;
-    Register<bit<16>, bit<9>>(bool_register_table_size) bool_register_table;
+    Register<bit<9>, bit<9>>(bool_register_table_size) bool_register_table;
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
     @name("bool_register_table_action")
-    RegisterAction<bit<16>, bit<9>, bit<16>>(bool_register_table) bool_register_table_action = {
-        void apply(inout bit<16> value, out bit<16> read_value) {
+    RegisterAction<bit<9>, bit<9>, bit<9>>(bool_register_table) bool_register_table_action = {
+        void apply(inout bit<9> value, out bit<9> read_value) {
             read_value = value; // Return the current value
         }
     };
@@ -479,13 +479,19 @@ control Ingress(
 
 
     @name(".update_register")
-    action update_register(bit<16> dropping_or_not) {
+    action update_register(bit<9> dropping_or_not) {
         bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
-        bit<16> reg_value = dropping_or_not;      // Value: 1-bit flag
-        bit<16> dummy_read_value;
+        bit<9> reg_value = dropping_or_not;      // Value: 1-bit flag
+        bit<9> dummy_read_value;
         bool_register_table_action.execute(reg_key, reg_value, dummy_read_value);
         direct_counter_scan.count();
     }
+
+    //@name(".update_register")
+    //action update_register(PortId_t dest_port) {
+    //    ig_tm_md.ucast_egress_port = dest_port;
+    //    direct_counter_scan.count();
+    //}
 
 
 
