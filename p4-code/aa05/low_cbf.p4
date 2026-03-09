@@ -66,17 +66,11 @@ control Ingress(
     Register<bit<8>, bit<9>>(bool_register_table_size) bool_register_table;
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
-    @name("bool_register_table_write_action")
-    RegisterAction<bit<8>, bit<9>>(bool_register_table) bool_register_table_write_action = {
-        void apply(inout bit<8> value) {
-            // Write operation - value is updated by the register system
-        }
-    };
-
-    @name("bool_register_table_read_action")
-    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_table_read_action = {
+    @name("bool_register_table_action")
+    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_table_action = {
         void apply(inout bit<8> value, out bit<8> read_value) {
-            read_value = value; // Return the current value
+            read_value = value; // Return the current value before update
+            // The register system automatically handles the write
         }
     };
 
@@ -488,9 +482,10 @@ control Ingress(
     @name(".update_register")
     action update_register(bit<8> dropping_or_not) {
         bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
+        bit<8> dummy_read_value;                 // Dummy variable for read output
         
         // Write the dropping_or_not value to the register
-        bool_register_table_write_action.execute(reg_key, dropping_or_not);
+        bool_register_table_action.execute(reg_key, dropping_or_not, dummy_read_value);
         direct_counter_scan.count();
     }
 
@@ -594,8 +589,9 @@ control Ingress(
         ing_port_table.apply();//generic table
         bit<8> reg_value;
         bit<9> reg_key=ig_intr_md.ingress_port;
+        bit<8> dummy_write_value = 0; // Not used for read
 
-        bool_register_table_read_action.execute(reg_key, reg_value);
+        bool_register_table_action.execute(reg_key, dummy_write_value, reg_value);
         if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
             ig_dprsr_md.drop_ctl = 0x1; // Drop packet
         }
