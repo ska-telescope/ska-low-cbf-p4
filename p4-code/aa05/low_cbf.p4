@@ -565,7 +565,7 @@ control Ingress(
         if (ig_md.packet_type_ingress == 4 || ig_md.packet_type_ingress == 6){
             change_mac_dst_table.apply();
             forward_ip_table.apply();
-            check_scan_id.apply();
+            // check_scan_id.apply();
 
         }
 
@@ -587,12 +587,13 @@ control Ingress(
             //
         }
         ing_port_table.apply();//generic table
-        bit<8> reg_value;
-        bit<9> reg_key=ig_intr_md.ingress_port;
-        bit<8> dummy_write_value = 0; // Not used for read
+        // bit<8> reg_value;
+        // bit<9> reg_key=ig_intr_md.ingress_port;
+        // bit<8> dummy_write_value = 0; // Not used for read
 
-        bool_register_table_action.execute(reg_key, dummy_write_value, reg_value);
-        if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
+        // bool_register_table_action.execute(reg_key, dummy_write_value, reg_value);
+        // if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
+        if (ig_md.packet_type_ingress== 0 )
             ig_dprsr_md.drop_ctl = 0x1; // Drop packet
         }
 
