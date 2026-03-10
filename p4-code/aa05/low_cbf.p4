@@ -593,9 +593,9 @@ control Ingress(
 
         // bool_register_table_action.execute(reg_key, dummy_write_value, reg_value);
         // if (ig_md.packet_type_ingress== 0 || reg_value == 1){ //packet unknown but
-        if (ig_md.packet_type_ingress== 0 ){
-            ig_dprsr_md.drop_ctl = 0x1; // Drop packet
-        }
+        // if (ig_md.packet_type_ingress== 0 ){
+        //    ig_dprsr_md.drop_ctl = 0x1; // Drop packet
+        // }
 
 
     }
