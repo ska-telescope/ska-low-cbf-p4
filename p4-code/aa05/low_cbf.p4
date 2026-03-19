@@ -69,8 +69,8 @@ control Ingress(
     @name("bool_register_table_action")
     RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_table_action = {
         void apply(inout bit<8> value, out bit<8> read_value) {
-            read_value = value; // Return the current value before update
-            // The register system automatically handles the write
+            read_value = value;
+            value = ig_md.dropping_or_not;
         }
     };
 
@@ -481,11 +481,8 @@ control Ingress(
 
     @name(".update_register")
     action update_register(bit<8> dropping_or_not) {
-        bit<9> reg_key = ig_intr_md.ingress_port; // Key: ingress port (bit<9>)
-        bit<8> dummy_read_value;                 // Dummy variable for read output
-        bit<8> value = dropping_or_not;
-        // Write the dropping_or_not value to the register
-        bool_register_table_action.execute(reg_key, value, dummy_read_value);
+        ig_md.dropping_or_not = dropping_or_not;
+        bool_register_table_action.execute((bit<9>)ig_intr_md.ingress_port);
         direct_counter_scan.count();
     }
 
@@ -565,7 +562,7 @@ control Ingress(
         if (ig_md.packet_type_ingress == 4 || ig_md.packet_type_ingress == 6){
             change_mac_dst_table.apply();
             forward_ip_table.apply();
-            // check_scan_id.apply();
+            check_scan_id.apply();
 
         }
 

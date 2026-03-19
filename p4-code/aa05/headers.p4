@@ -51,9 +51,7 @@ struct metadata_t {
     bit<8>      sub_array;
     MirrorId_t  ing_mir_ses;
     pkt_type_t  pkt_type;
-
-
-
+    bit<8>      dropping_or_not;
 }
 
 header telemetry_spead_h{
