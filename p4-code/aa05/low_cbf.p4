@@ -66,11 +66,18 @@ control Ingress(
     Register<bit<8>, bit<9>>(bool_register_table_size) bool_register_table;
     // A simple one-bit register action that returns the inverse of the value
     // stored in the register table.
-    @name("bool_register_table_action")
-    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_table_action = {
+    @name("bool_register_set_action")
+    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_set_action = {
         void apply(inout bit<8> value, out bit<8> read_value) {
             read_value = value;
-            value = ig_md.dropping_or_not;
+            value = 1;
+        }
+    };
+    @name("bool_register_clear_action")
+    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_clear_action = {
+        void apply(inout bit<8> value, out bit<8> read_value) {
+            read_value = value;
+            value = 0;
         }
     };
 
@@ -479,20 +486,17 @@ control Ingress(
     }
 
 
-    @name(".update_register")
-    action update_register(bit<8> dropping_or_not) {
-        ig_md.dropping_or_not = dropping_or_not;
-        bool_register_table_action.execute((bit<9>)ig_intr_md.ingress_port);
+    @name(".set_dropping")
+    action set_dropping() {
+        bool_register_set_action.execute((bit<9>)ig_intr_md.ingress_port);
         direct_counter_scan.count();
     }
 
-    //@name(".update_register")
-    //action update_register(PortId_t dest_port) {
-    //    ig_tm_md.ucast_egress_port = dest_port;
-    //    direct_counter_scan.count();
-    //}
-
-
+    @name(".clear_dropping")
+    action clear_dropping() {
+        bool_register_clear_action.execute((bit<9>)ig_intr_md.ingress_port);
+        direct_counter_scan.count();
+    }
 
     @name(".check_scan_id")
     table check_scan_id {
@@ -500,7 +504,8 @@ control Ingress(
             hdr.spead_data.scan_id: exact @name("scan_id");
         }
         actions = {
-            update_register;
+            set_dropping;
+            clear_dropping;
             @defaultonly nop;
         }
         size = 256;
