@@ -157,7 +157,7 @@ parser IngressParser(
 
     state parse_spead_sdp{
         transition select(hdr.spead_preamble.number_items) {
-             7 : parse_spead_sdp_data;
+             8 : parse_spead_sdp_data;
              default : accept;
         }
 
