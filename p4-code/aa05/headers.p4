@@ -51,9 +51,6 @@ struct metadata_t {
     bit<8>      sub_array;
     MirrorId_t  ing_mir_ses;
     pkt_type_t  pkt_type;
-
-
-
 }
 
 header telemetry_spead_h{
@@ -201,6 +198,19 @@ header spead_v3_h {
     bit<32> high_heap_counter;
     bit<32> heap_counter;
     bit<64> spead_payload_len;
+    bit<64> scan_id;
+}
+
+header spead_data_h {
+    bit<64> heap_counter;
+    bit<64> heap_size;
+    bit<64> heap_offset;
+    bit<64> payload_length;
+    bit<64> epoch_offset_pointer;
+    bit<64> scan_pointer;
+    bit<64> vis_flag;
+    bit<64> correlator_data_pointer;
+    bit<64> epoch_offset;
     bit<64> scan_id;
 }
 

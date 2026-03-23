@@ -59,6 +59,33 @@ control Ingress(
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_2;
     @name(".counter_arp")
     DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_arp;
+    @name(".counter_scan")
+    DirectCounter<bit<32>>(CounterType_t.PACKETS_AND_BYTES) direct_counter_scan;
+
+    const bit<32> bool_register_table_size = 512;
+    Register<bit<8>, bit<9>>(bool_register_table_size) bool_register_table;
+    // A simple one-bit register action that returns the inverse of the value
+    // stored in the register table.
+    @name("bool_register_set_action")
+    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_set_action = {
+        void apply(inout bit<8> value, out bit<8> read_value) {
+            read_value = value;
+            value = 1;
+        }
+    };
+    @name("bool_register_clear_action")
+    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_clear_action = {
+        void apply(inout bit<8> value, out bit<8> read_value) {
+            read_value = value;
+            value = 0;
+        }
+    };
+    @name("bool_register_read_action")
+    RegisterAction<bit<8>, bit<9>, bit<8>>(bool_register_table) bool_register_read_action = {
+        void apply(inout bit<8> value, out bit<8> read_value) {
+            read_value = value;
+        }
+    };
 
     // Register to record losses total and current sequence number in the pair
     @name(".reg_losses")
@@ -90,31 +117,9 @@ control Ingress(
 
                 value.uptime = value.uptime+1;
                 value.downtime = value.downtime;
-            }
-            // Update the register with the new timestamp
-
-            ;
+            };
         }
     };
-
-    /*Register<pair_test, bit<16>>(65535) last_seen_down;
-    RegisterAction<pair_test, bit<16>, bit<32>>(last_seen) last_seen_action = {
-        void apply(inout pair_test value, out bit<32> read_value){
-
-
-            bit<16> tmp;
-            tmp = 0;
-            bit<32> down;
-            bit<32> up;
-            down = value.downtime;
-            up = value.uptime;
-            read_value = down ++ up;
-
-            /* Update the register with the new timestamp */
-    /*        value.uptime = tmp++ig_md.timestamp[47:32];
-            value.downtime = ig_md.timestamp[31:0];
-        }
-    };*/
 
     Register<pair_test_total, bit<16>>(32767) total_spead;
     RegisterAction<pair_test_total, bit<16>, bit<32>>(total_spead) total_spead_action = {
@@ -486,44 +491,33 @@ control Ingress(
 
     }
 
-    // Table used only during commissioning to test what happen when we emulate the disconnection of
-    // an entire sub_station
-    @name(".sub_station_table")
-    table sub_station_table {
+
+    @name(".set_dropping")
+    action set_dropping() {
+        bool_register_set_action.execute((bit<9>)ig_intr_md.ingress_port);
+        direct_counter_scan.count();
+    }
+
+    @name(".clear_dropping")
+    action clear_dropping() {
+        bool_register_clear_action.execute((bit<9>)ig_intr_md.ingress_port);
+        direct_counter_scan.count();
+    }
+
+    @name(".check_scan_id")
+    table check_scan_id {
         key = {
-            hdr.station.sub_station: exact @name("sub_station");
+            hdr.spead_data.scan_id: exact @name("scan_id");
         }
         actions = {
-            drop;
+            set_dropping;
+            clear_dropping;
             @defaultonly nop;
         }
         size = 256;
         const default_action = nop;
+        counters = direct_counter_scan;
     }
-
-    // Table used only during commissioning to test what happen when we emulate the disconnection of
-    // an entire sub_station
-    @name(".swap")
-    action swap(bit<8> new_sub_station, bit<16> new_station) {
-        hdr.station.sub_station = new_sub_station;
-        hdr.station.station_no = new_station;
-
-
-    }
-
-    @name(".sub_station_swap_table")
-    table sub_station_swap_table {
-        key = {
-            hdr.station.sub_station: exact @name("sub_station");
-        }
-        actions = {
-            swap;
-            @defaultonly nop;
-        }
-        size = 256;
-        const default_action = nop;
-    }
-
 
 
     apply {
@@ -541,8 +535,6 @@ control Ingress(
         if (ig_md.packet_type_ingress == 5){
             //multiplier_spead.apply();
             spead_table.apply();
-            sub_station_table.apply();
-            sub_station_swap_table.apply();
             /* From here we have the first advanced telemetry for SPEAD packets
                Main issue is the need for 3 registers which
              */
@@ -581,7 +573,9 @@ control Ingress(
         if (ig_md.packet_type_ingress == 4 || ig_md.packet_type_ingress == 6){
             change_mac_dst_table.apply();
             forward_ip_table.apply();
-
+        }
+        if (hdr.spead_data.isValid()) {
+            check_scan_id.apply();
         }
 
 
@@ -602,10 +596,10 @@ control Ingress(
             //
         }
         ing_port_table.apply();//generic table
-        if (ig_md.packet_type_ingress== 0){ //packet unknown but
+        bit<8> reg_value = bool_register_read_action.execute((bit<9>)ig_intr_md.ingress_port);
+        if (reg_value == 1 || ig_md.packet_type_ingress== 0) {
             ig_dprsr_md.drop_ctl = 0x1;
         }
-
 
     }
 

@@ -57,6 +57,7 @@ struct header_t {
     spead_preamble_h spead_preamble;
     spead_h spead;
     spead_v3_h spead_v3;
+    spead_data_h spead_data;
     channel_info_h channel;
     station_info_h station;
     psr_h psr;
