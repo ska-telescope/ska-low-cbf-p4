@@ -22,7 +22,7 @@ The documentation for this project can be found in the `docs` folder, or browsed
 
 # Changelog
 
-### not in release yet
+### 1.0.1
 * VLAN tag can be used
 * Selective packet dropping based on scan ID: new `check_scan_id` table allows the control plane to drop traffic on a per-ingress-port basis when a matching SDP SPEAD scan ID is received
 
