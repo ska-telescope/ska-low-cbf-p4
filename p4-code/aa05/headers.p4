@@ -38,7 +38,8 @@ struct metadata_t {
     bool        pingable;
     bit<16>     l4_src_port;
     bit<16>     l4_dst_port;
-    // type 0-unknown, 1-ARP, 2-ICMP, 3-IP(non UDP), 4-UDP(other), 5-SPEAD, 6-PSR
+    // type 0-unknown, 1-ARP, 2-IP(non UDP), 3-ICMP, 4-UDP(other), 5-SPEAD,
+    // 6-PSR, 7-PTP, 8-LLDP
     bit<4>      packet_type_ingress;
     bit<32>     last_spead_packet;
     bit<32>     losses;

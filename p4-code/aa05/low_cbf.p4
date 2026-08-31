@@ -597,7 +597,7 @@ control Ingress(
         }
         ing_port_table.apply();//generic table
         bit<8> reg_value = bool_register_read_action.execute((bit<9>)ig_intr_md.ingress_port);
-        if (reg_value == 1 || ig_md.packet_type_ingress== 0) {
+        if (reg_value == 1 || ig_md.packet_type_ingress== 0 || ig_md.packet_type_ingress == 8) {
             ig_dprsr_md.drop_ctl = 0x1;
         }
 
