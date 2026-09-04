@@ -282,7 +282,8 @@ parser EgressParser(
                 eg_md.pingable = true;
                 eg_md.l4_src_port = 0;
                 eg_md.l4_dst_port = 0;
-                    // type 0-unknown, 1-ARP, 2-ICMP, 3-IP(non UDP), 4-UDP(other), 5-SPEAD, 6-PSR
+                    // type 0-unknown, 1-ARP, 2-IP(non UDP), 3-ICMP, 4-UDP(other), 5-SPEAD,
+                    // 6-PSR, 7-PTP, 8-LLDP
                 eg_md.packet_type_ingress = 0;
                 eg_md.last_spead_packet = 0;
                 eg_md.losses = 0;
