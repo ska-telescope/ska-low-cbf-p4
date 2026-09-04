@@ -9,6 +9,7 @@
 #define ETHERTYPE_VLAN 0x8100
 #define ETHERTYPE_IPV6 0x86dd
 #define ETHERTYPE_PTP 0x88F7
+#define ETHERTYPE_LLDP 0x88CC
 
 #define IP_PROTOCOLS_ICMP   1
 #define IP_PROTOCOLS_IGMP   2
@@ -45,6 +46,7 @@ struct header_t {
     mirror_bridged_metadata_h bridged_md;
     ethernet_h ethernet;
     vlan_tag_h vlan_tag;
+    vlan_tag_h vlan_tag_2;
     ipv4_h ipv4;
     ipv4_option_h ipv4_option;
     ipv6_h ipv6;
