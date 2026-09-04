@@ -33,6 +33,27 @@ stages:
 #    - sudo -E $(which poetry) run pytest -m bfrt -vv
 #    - sudo chown -R gitlab-runner:gitlab-runner /home/gitlab-runner/builds/
 
+# Previously no job here carried a merge_request_event rule, so the
+# shared workflow rules (via the finaliser include) skip the branch
+# pipeline once a branch has an open MR, and there was nothing else to
+# run a merge request pipeline with instead - leaving no pipeline at
+# all. This job unblocks that, and gives some of the black/isort
+# coverage CLAUDE.md documents (not run in CI before). It skips the
+# `pre-commit` framework itself: the pinned pre-commit-hooks rev
+# (v2.3.0) no longer installs against current poetry-core from PyPI.
+# allow_failure because the repo doesn't currently pass black/isort
+# cleanly; tighten this once that's addressed.
+format-check:
+  stage: lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true
+  before_script:
+    - pip3 install --quiet black isort
+  script:
+    - black --check --line-length=79 --exclude '/\.make/' .
+    - isort --check-only --profile black --line-length 79 --skip .make .
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   # CHARTS_TO_PUBLISH: ska-low-cbf-p4 # no charts in this repo (yet?)
